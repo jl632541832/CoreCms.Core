@@ -1,37 +1,65 @@
-# CoreCms.Core
 
-#### 介绍1
-CoreCms.Core基础管理模块
+# 系统说明
 
-#### 软件架构
-软件架构说明
+### 项目介绍
+基于Asp.net Core 3.1开发。
+程序上手难度低，执行效率、扩展性、稳定性值得信赖，可大量节省定制化开发周期。争取让开发入门者拿来即用。
+目前是1.0版本，主要是行业商城通用软件功能实现，以后会增加更多功能，持续开发中...
+#### 关于开源
+软件受国家计算机软件著作权保护（登记号：2020XXXXXXXXX）。
+社区开源版本使用 GPL许可证发布，可用于商业运营、二次开发，需要保留相关版权信息和许可提示。
+我们的团队水平有限，也是在探索中学习、改进。开源，是为了让认可我们的用户能自由的使用、学习软件的内部架构，也可以修改、重新发布。同时让更多的人有机会阅读并发现bug、对软件项目提出改进意见。
+
+### 后端技术
+#### 技术模块组成
+| 技术 | 名称 | 版本 | 官网 |
+| --- | --- | --- | --- |
+| Asp.net Core | 应用框架 |  | [https://projects.spring.io/spring-boot/](https://projects.spring.io/spring-boot/) |
+| Asp.net Core WebApi | Api框架 |  | [https://projects.spring.io/spring-cloud/](https://projects.spring.io/spring-boot/) |
+| Swagger2 | Api文档 |  | [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html) |
+| AutoFac | IOC框架 |  | [https://gitee.com/free/Mapper](https://gitee.com/free/Mapper) |
+| SqlSugar | ORM框架 |  | [http://www.mybatis.org/generator/index.html](http://www.mybatis.org/generator/index.html) |
+| AutoMapper | 实体映射 |  | [https://swagger.io/](https://swagger.io/) |
+| DotLiquid | 模板引擎 |  | [https://www.thymeleaf.org/](https://www.thymeleaf.org/) |
+| Nlog | 日志组件 |  | [https://logback.qos.ch](https://logback.qos.ch/) |
+| Redis | 数据缓存 |  | [https://github.com/alibaba/druid](https://github.com/alibaba/druid) |
+| Jwt | 授权认证 |  | [http://hibernate.org/validator/](http://hibernate.org/validator/) |
+| HangFire | 定时任务 |  | [http://www.rabbitmq.com/](http://www.rabbitmq.com/) |
+| Payment  | 在线支付 |  | [https://redis.io/](https://redis.io/) |
+| SenParc | 微信SDK |  | [https://zipkin.io/](https://zipkin.io/) |
 
 
-#### 安装教程
+#### 组件模块说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+- 提供 Redis 做缓存处理；
+- 提供 Redis 做缓存处理；
+- 使用 Swagger 做api文档；
+- 使用 Automapper 处理对象映射；
+- 使用 AutoFac 做依赖注入容器，并提供批量服务注入；
+- 支持 CORS 跨域；
+- 封装 JWT 自定义策略授权；
+- 使用 Nlog日志框架，集成原生 ILogger 接口做日志记录；
+- 使用 SignalR 双工通讯；
+- 添加 IpRateLimiting 做 API 限流处理;
+- 使用 HangFire 做定时任务处理；
+- 支持 数据库读写分离和多库操作；
 
 
-#### 特技
+### 前端技术
+| 技术 | 名称 | 版本 | 官网 |
+| --- | --- | --- | --- |
+| LayUIAdmin |  |  |  |
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+
+### 软硬件需求
+
+- （必选）IIS7.5或以上/docker容器/k8s
+- （必选）sqlserver 2012R2 或以上版本
+- （必选）阿里云OSS/腾讯云OSS
+- （必选）支持https协议的域名
+- （可选）Redis 5.7或以上版本
+- （可选）易联云网络打印机
+
+
+
+
