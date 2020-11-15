@@ -16,7 +16,7 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
         , engine: '.html' //视图文件后缀名
         , pageTabs: false //是否开启页面选项卡功能。单页版不推荐开启
 
-        , name: '核心商城系统'
+        , name: '核心内容管理系统'
         , tableName: 'CoreCms' //本地存储表名
         , MOD_NAME: 'admin' //模块事件名
 

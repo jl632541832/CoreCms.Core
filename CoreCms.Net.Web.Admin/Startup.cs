@@ -286,11 +286,11 @@ namespace CoreCms.Net.Web.Admin
 
             //设置默认起始页（如default.html）
             //此处的路径是相对于wwwroot文件夹的相对路径
-            var defaultFilesOptions = new DefaultFilesOptions();
-            defaultFilesOptions.DefaultFileNames.Clear();
-            defaultFilesOptions.DefaultFileNames.Add("index.html");
-            app.UseDefaultFiles(defaultFilesOptions);
-            app.UseStaticFiles();
+            //var defaultFilesOptions = new DefaultFilesOptions();
+            //defaultFilesOptions.DefaultFileNames.Clear();
+            //defaultFilesOptions.DefaultFileNames.Add("index.html");
+            //app.UseDefaultFiles(defaultFilesOptions);
+            //app.UseStaticFiles();
         }
     }
 }

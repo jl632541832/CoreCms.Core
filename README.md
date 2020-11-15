@@ -1,32 +1,33 @@
 
 # 系统说明
-
+## 核心内容管理系统底层使用的权限管理系统
 ### 项目介绍
-基于Asp.net Core 3.1开发。
-程序上手难度低，执行效率、扩展性、稳定性值得信赖，可大量节省定制化开发周期。争取让开发入门者拿来即用。
-目前是1.0版本，主要是行业商城通用软件功能实现，以后会增加更多功能，持续开发中...
+基于Asp.net Core 3.1开发。  
+颗粒化权限控制，能精确到单个action操作上。  
+程序上手难度低，执行效率、扩展性、稳定性值得信赖，可大量节省定制化开发周期。争取让开发入门者拿来即用。  
+目前是1.0版本，主要是通用功能实现，以后会增加更多功能，持续开发中...  
 #### 关于开源
-软件受国家计算机软件著作权保护（登记号：2020XXXXXXXXX）。
-社区开源版本使用 GPL许可证发布，可用于商业运营、二次开发，需要保留相关版权信息和许可提示。
+软件受国家计算机软件著作权保护（软著登字第6103445号）。  
+使用 GPL许可证发布，可用于商业运营、二次开发，需要保留相关版权信息和许可提示。  
 我们的团队水平有限，也是在探索中学习、改进。开源，是为了让认可我们的用户能自由的使用、学习软件的内部架构，也可以修改、重新发布。同时让更多的人有机会阅读并发现bug、对软件项目提出改进意见。
 
 ### 后端技术
 #### 技术模块组成
-| 技术 | 名称 | 版本 | 官网 |
-| --- | --- | --- | --- |
-| Asp.net Core | 应用框架 |  | [https://projects.spring.io/spring-boot/](https://projects.spring.io/spring-boot/) |
-| Asp.net Core WebApi | Api框架 |  | [https://projects.spring.io/spring-cloud/](https://projects.spring.io/spring-boot/) |
-| Swagger2 | Api文档 |  | [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html) |
-| AutoFac | IOC框架 |  | [https://gitee.com/free/Mapper](https://gitee.com/free/Mapper) |
-| SqlSugar | ORM框架 |  | [http://www.mybatis.org/generator/index.html](http://www.mybatis.org/generator/index.html) |
-| AutoMapper | 实体映射 |  | [https://swagger.io/](https://swagger.io/) |
-| DotLiquid | 模板引擎 |  | [https://www.thymeleaf.org/](https://www.thymeleaf.org/) |
-| Nlog | 日志组件 |  | [https://logback.qos.ch](https://logback.qos.ch/) |
-| Redis | 数据缓存 |  | [https://github.com/alibaba/druid](https://github.com/alibaba/druid) |
-| Jwt | 授权认证 |  | [http://hibernate.org/validator/](http://hibernate.org/validator/) |
-| HangFire | 定时任务 |  | [http://www.rabbitmq.com/](http://www.rabbitmq.com/) |
-| Payment  | 在线支付 |  | [https://redis.io/](https://redis.io/) |
-| SenParc | 微信SDK |  | [https://zipkin.io/](https://zipkin.io/) |
+| 技术 | 名称 |官网 |
+| --- | --- |  --- |
+| Asp.net Core | 应用框架| [https://projects.spring.io/spring-boot/](https://projects.spring.io/spring-boot/) |
+| Asp.net Core WebApi | Api框架| [https://projects.spring.io/spring-cloud/](https://projects.spring.io/spring-boot/) |
+| Swagger2 | Api文档| [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html) |
+| AutoFac | IOC框架| [https://gitee.com/free/Mapper](https://gitee.com/free/Mapper) |
+| SqlSugar | ORM框架| [http://www.mybatis.org/generator/index.html](http://www.mybatis.org/generator/index.html) |
+| AutoMapper | 实体映射| [https://swagger.io/](https://swagger.io/) |
+| DotLiquid | 模板引擎| [https://www.thymeleaf.org/](https://www.thymeleaf.org/) |
+| Nlog | 日志组件| [https://logback.qos.ch](https://logback.qos.ch/) |
+| Redis | 数据缓存| [https://github.com/alibaba/druid](https://github.com/alibaba/druid) |
+| Jwt | 授权认证| [http://hibernate.org/validator/](http://hibernate.org/validator/) |
+| HangFire | 定时任务| [http://www.rabbitmq.com/](http://www.rabbitmq.com/) |
+| Payment  | 在线支付| [https://redis.io/](https://redis.io/) |
+| SenParc | 微信SDK| [https://zipkin.io/](https://zipkin.io/) |
 
 
 #### 组件模块说明
@@ -46,9 +47,9 @@
 
 
 ### 前端技术
-| 技术 | 名称 | 版本 | 官网 |
-| --- | --- | --- | --- |
-| LayUIAdmin |  |  |  |
+| 技术 | 官网 |
+| --- | --- |
+| LayUIAdmin | https://www.layui.com/ |
 
 
 ### 软硬件需求
