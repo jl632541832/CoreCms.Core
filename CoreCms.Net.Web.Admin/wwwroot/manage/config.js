@@ -53,12 +53,9 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
 
         //扩展的第三方模块
         , extend: [
-            'echarts', //echarts 核心包
-            'echartsTheme', //echarts 主题
             'treeGrid', //树形表格
             'coreHelper',//常用操作封装
             'dtree',//树形菜单
-
         ]
 
         //主题配置

@@ -7,7 +7,7 @@
 程序上手难度低，执行效率、扩展性、稳定性值得信赖，可大量节省定制化开发周期。争取让开发入门者拿来即用。  
 目前是1.0版本，主要是通用功能实现，以后会增加更多功能，持续开发中...  
 #### 关于开源
-软件受国家计算机软件著作权保护（软著登字第6103445号）。  
+软件受国家计算机软件著作权保护（软著登记号：2020SR1224749）。  
 使用 GPL许可证发布，可用于商业运营、二次开发，需要保留相关版权信息和许可提示。  
 我们的团队水平有限，也是在探索中学习、改进。开源，是为了让认可我们的用户能自由的使用、学习软件的内部架构，也可以修改、重新发布。同时让更多的人有机会阅读并发现bug、对软件项目提出改进意见。
 
@@ -25,14 +25,10 @@
 | Nlog | 日志组件| [https://logback.qos.ch](https://logback.qos.ch/) |
 | Redis | 数据缓存| [https://github.com/alibaba/druid](https://github.com/alibaba/druid) |
 | Jwt | 授权认证| [http://hibernate.org/validator/](http://hibernate.org/validator/) |
-| HangFire | 定时任务| [http://www.rabbitmq.com/](http://www.rabbitmq.com/) |
-| Payment  | 在线支付| [https://redis.io/](https://redis.io/) |
-| SenParc | 微信SDK| [https://zipkin.io/](https://zipkin.io/) |
 
 
 #### 组件模块说明
 
-- 提供 Redis 做缓存处理；
 - 提供 Redis 做缓存处理；
 - 使用 Swagger 做api文档；
 - 使用 Automapper 处理对象映射；
@@ -42,14 +38,13 @@
 - 使用 Nlog日志框架，集成原生 ILogger 接口做日志记录；
 - 使用 SignalR 双工通讯；
 - 添加 IpRateLimiting 做 API 限流处理;
-- 使用 HangFire 做定时任务处理；
 - 支持 数据库读写分离和多库操作；
 
 
 ### 前端技术
-| 技术 | 官网 |
+| 技术 | 官网 | 说明 |
 | --- | --- |
-| LayUIAdmin | https://www.layui.com/ |
+| LayUIAdmin | https://www.layui.com/ | 不提供完整layUIAdmin框架，只保留5个用于运行的核心js文件。 |
 
 
 ### 软硬件需求
