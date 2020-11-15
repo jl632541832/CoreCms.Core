@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Sms\**" />
+    <EmbeddedResource Remove="Sms\**" />
+    <None Remove="Sms\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.4.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.0.17" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreCms.Net.Caching\CoreCms.Net.Caching.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Configuration\CoreCms.Net.Configuration.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.IRepository\CoreCms.Net.IRepository.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Loging\CoreCms.Net.Loging.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Swagger\CoreCms.Net.Swagger.csproj" />
+  </ItemGroup>
+
+</Project>

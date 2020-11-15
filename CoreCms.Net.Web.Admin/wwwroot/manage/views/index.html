@@ -1,0 +1,175 @@
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header"><i class="layui-icon layui-icon-speaker"></i>版本信息</div>
+                <div class="layui-card-body layui-text">
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td>当前版本</td>
+                                <td>
+                                    <script type="text/html" template>
+                                        v{{ layui.admin.v }}
+                                        <a href="http://fly.layui.com/docs/3/" target="_blank" style="padding-left: 10px;">日志</a>
+                                    </script>
+                                    <a href="javascript:;" layadmin-event="update" style="padding-left: 5px;">检查更新</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>基于框架</td>
+                                <td>
+                                    <script type="text/html" template>
+                                        Asp.Net Core 3.1 、 layui-v{{ layui.v }}
+                                    </script>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>主要特色</td>
+                                <td>单页面 / 响应式 / 清爽 / 极简</td>
+                            </tr>
+                            <tr>
+                                <td>获取渠道</td>
+                                <td style="padding-bottom: 0;">
+                                    <div class="layui-btn-container">
+                                        <a href="http://www.layui.com/admin/" target="_blank" class="layui-btn layui-btn-danger">获取授权</a>
+                                        <a href="http://fly.layui.com/download/layuiAdmin/" target="_blank" class="layui-btn">立即下载</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header loading-more">
+                    <div><i class="layui-icon layui-icon-form"></i>最近登录</div>
+                    <a href="javascript:;" lay-href="/system/sysloginrecord/">查看更多>></a>
+                </div>
+                <div class="layui-card-body" id="loginLog"></div>
+
+            </div>
+        </div>
+
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header loading-more">
+                    <div><i class="layui-icon layui-icon-form"></i>全局日志</div>
+                    <a href="javascript:;" lay-href="/system/sysnlogrecords/">查看更多>></a>
+                </div>
+                <div class="layui-card-body" id="nlogTable"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="log" type="text/html">
+
+    {{# if(d.length === 0){ }} 没有历史记录 {{# }else{ }}
+    <table class="layui-table">
+        <thead>
+            <tr>
+                <th>状态</th>
+                <th>登录用户</th>
+                <th>记录时间</th>
+                <th>登录IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{# layui.each(d, function(index, item){ }}
+            <tr>
+                <td>{{ item.os }}</td>
+                <td>{{ item.username }}</td>
+                <td>{{ item.createTime }}</td>
+                <td>{{ item.ip }}</td>
+            </tr>
+            {{# }); }}
+        </tbody>
+    </table>
+    {{# } }}
+</script>
+
+<script id="nlog" type="text/html">
+
+    {{# if(d.length === 0){ }} 没有操作记录 {{# }else{ }}
+    <table class="layui-table">
+        <thead>
+            <tr>
+                <th>类型</th>
+                <th>时间</th>
+                <th>内容</th>
+                <th>级别</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{# layui.each(d, function(index, item){ }}
+            <tr>
+                <td>{{ item.LogType }}</td>
+                <td>{{ item.LogDate }}</td>
+                <td>{{ item.Message }}</td>
+                <td>{{ item.LogLevel }}</td>
+            </tr>
+            {{# }); }}
+        </tbody>
+    </table>
+    {{# } }}
+</script>
+
+
+<script>
+    var debug = layui.setter.debug;
+    layui.use(['index', 'table', 'laydate', 'util', 'coreHelper', 'laytpl', 'echarts', 'carousel'],
+        function () {
+            var $ = layui.$;
+            var admin = layui.admin;
+            var table = layui.table;
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var setter = layui.setter;
+            var coreHelper = layui.coreHelper;
+            var util = layui.util;
+            var laytpl = layui.laytpl;
+            var carousel = layui.carousel;
+
+            //获取历史登录记录
+            coreHelper.Post("Api/Tools/GetSysLoginRecord",
+                {}, function (data) {
+                    if (data.code == 0) {
+                        var getTpl = log.innerHTML,
+                            view = document.getElementById('loginLog');
+                        laytpl(getTpl).render(data.data, function (html) {
+                            view.innerHTML = html;
+                        })
+                    }
+                });
+            //获取全局Nlog日志
+            coreHelper.Post("Api/Tools/GetSysNLogRecords",
+                {}, function (data) {
+                    if (data.code == 0) {
+                        var getTpl = nlog.innerHTML,
+                            view = document.getElementById('nlogTable');
+                        laytpl(getTpl).render(data.data, function (html) {
+                            view.innerHTML = html;
+                        })
+                    }
+                });
+
+            //重载form
+            form.render();
+        });
+</script>
+<style>
+    .loading-more { overflow: hidden; }
+        .loading-more > div { display: inline-block; }
+        .loading-more a { float: right; font-size: 12px; margin-top: 5px; }
+    .layui-card-header .layui-icon { position: initial; margin-right: 10px; }
+</style>

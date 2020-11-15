@@ -1,0 +1,225 @@
+<script type="text/html" template  lay-done="layui.data.done(d);">
+    <table class="layui-table layui-form" lay-filter="LAY-app-CoreCmsErrorMessageLog-detailsForm" id="LAY-app-CoreCmsErrorMessageLog-detailsForm">
+        <colgroup>
+            <col width="150">
+            <col>
+        </colgroup>
+        <tbody>
+		    
+		    <tr>
+                <td>
+                    <label for="id">序列</label>
+                </td>
+                <td>
+                    [[ d.params.data.id || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="msgType">消息类型</label>
+                </td>
+                <td>
+                    [[ d.params.data.msgType || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="message">消息内容</label>
+                </td>
+                <td>
+                    [[ d.params.data.message || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="path">请求路径</label>
+                </td>
+                <td>
+                    [[ d.params.data.path || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="assembly">程序集名称</label>
+                </td>
+                <td>
+                    [[ d.params.data.assembly || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="actionArguments">异常参数</label>
+                </td>
+                <td>
+                    [[ d.params.data.actionArguments || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="httpMethod">请求类型</label>
+                </td>
+                <td>
+                    [[ d.params.data.httpMethod || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="stackTrace">异常堆栈</label>
+                </td>
+                <td>
+                    [[ d.params.data.stackTrace || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="source">异常源</label>
+                </td>
+                <td>
+                    [[ d.params.data.source || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="ip">服务器IP 端口</label>
+                </td>
+                <td>
+                    [[ d.params.data.ip || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="userAgent">客户端浏览器标识</label>
+                </td>
+                <td>
+                    [[ d.params.data.userAgent || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="dotNetVersion">.NET解释引擎版本</label>
+                </td>
+                <td>
+                    [[ d.params.data.dotNetVersion || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="dotNetBit">应用程序池位数</label>
+                </td>
+                <td>
+                    [[ d.params.data.dotNetBit || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="osVersion">操作系统类型</label>
+                </td>
+                <td>
+                    [[ d.params.data.osVersion || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="osBit">操作系统位数</label>
+                </td>
+                <td>
+                    [[ d.params.data.osBit || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="cpuCount">CPU个数</label>
+                </td>
+                <td>
+                    [[ d.params.data.cpuCount || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="cpuType">CPU类型</label>
+                </td>
+                <td>
+                    [[ d.params.data.cpuType || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="iisVersion">IIS版本</label>
+                </td>
+                <td>
+                    [[ d.params.data.iisVersion || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="type">请求地址类型</label>
+                </td>
+                <td>
+                    [[ d.params.data.type || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="showException">是否显示异常界面</label>
+                </td>
+                <td>
+                    <input type="checkbox" disabled name="showException" value="[[d.params.data.showException]]" lay-skin="switch" lay-text="开启|关闭" lay-filter="showException" [[ d.params.data.showException ? 'checked' : '' ]]>
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="time">异常发生时间</label>
+                </td>
+                <td>
+                    [[ d.params.data.time || '' ]]
+                </td>
+            </tr>
+		    
+		    <tr>
+                <td>
+                    <label for="method">异常发生方法</label>
+                </td>
+                <td>
+                    [[ d.params.data.method || '' ]]
+                </td>
+            </tr>
+		    
+        </tbody>
+    </table>
+</script>
+<script>
+    var debug= layui.setter.debug;
+    layui.data.done = function (d) {
+        //开启调试情况下获取接口赋值数据
+        if (debug) { console.log(d.params.data); }
+
+        layui.use(['admin', 'form', 'coreHelper'], function () {
+            var $ = layui.$
+                , setter = layui.setter
+                , admin = layui.admin
+                , coreHelper = layui.coreHelper
+                , form = layui.form;
+            form.render(null, 'LAY-app-CoreCmsErrorMessageLog-detailsForm');
+        });
+    };
+</script>

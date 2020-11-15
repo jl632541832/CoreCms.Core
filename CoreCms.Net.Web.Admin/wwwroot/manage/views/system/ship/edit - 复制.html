@@ -1,0 +1,178 @@
+<link href="/manage/style/dtree/dtree.css" rel="stylesheet" />
+<link href="/manage/style/dtree/font/dtreefont.css" rel="stylesheet" />
+<style>
+    .selectArea { color: #46a751; }
+    .div-none { display: none; }
+    .layui-form-radio { float: left; }
+</style>
+
+<script type="text/html" template lay-done="layui.data.sendParams(d);">
+    <div class="layui-form layui-alone-form layui-form-pane" lay-filter="LAY-app-CoreCmsShip-editForm" id="LAY-app-CoreCmsShip-editForm">
+        <input type="hidden" name="id" id="id" value="{{d.params.data.id || '' }}" />
+      
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">配送方式名称</label>
+            <div class="layui-input-inline">
+                <input name="name" id="name" lay-verType="tips" lay-verify="required|verifyname" class="layui-input" placeholder="请输入配送方式名称" lay-reqText="请输入配送方式名称" value="{{d.params.data.name || '' }}" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过50个字符内容</div>
+        </div>
+
+        <div class="layui-form-item" pane>
+            <label for="isCashOnDelivery" class="layui-form-label">是否货到付款</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="isCashOnDelivery" id="isCashOnDelivery" {{ d.params.data.isCashOnDelivery ? 'checked' : '' }} lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="firstUnit" class="layui-form-label">首重</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="firstUnit" id="firstUnit" lay-verType="tips" lay-verify="required|number" class="layui-input" value="{{d.params.data.firstUnit || '' }}" placeholder="请输入首重" lay-reqText="请输入首重并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="continueUnit" class="layui-form-label">续重</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="continueUnit" id="continueUnit" lay-verType="tips" lay-verify="required|number" class="layui-input" value="{{d.params.data.continueUnit || '' }}" placeholder="请输入续重" lay-reqText="请输入续重并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item" pane>
+            <label for="isdefaultAreaFee" class="layui-form-label">是否按地区设置配送费用是否启用默认配送费用</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="isdefaultAreaFee" id="isdefaultAreaFee" {{ d.params.data.isdefaultAreaFee ? 'checked' : '' }} lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="areaType" class="layui-form-label">地区类型</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="areaType" id="areaType" lay-verType="tips" lay-verify="required|number" class="layui-input" value="{{d.params.data.areaType || '' }}" placeholder="请输入地区类型" lay-reqText="请输入地区类型并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="firstunitPrice" class="layui-form-label">首重费用</label>
+            <div class="layui-input-inline">
+                <input name="firstunitPrice" id="firstunitPrice" lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入首重费用" lay-reqText="请输入首重费用" value="{{d.params.data.firstunitPrice || '' }}" />
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="continueunitPrice" class="layui-form-label">续重费用</label>
+            <div class="layui-input-inline">
+                <input name="continueunitPrice" id="continueunitPrice" lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入续重费用" lay-reqText="请输入续重费用" value="{{d.params.data.continueunitPrice || '' }}" />
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="exp" class="layui-form-label">配送费用计算表达式</label>
+            <div class="layui-input-inline">
+                <input name="exp" id="exp" lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入配送费用计算表达式" lay-reqText="请输入配送费用计算表达式" value="{{d.params.data.exp || '' }}" />
+
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过-1个字符内容</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="logiName" class="layui-form-label">物流公司名称</label>
+            <div class="layui-input-inline">
+                <input name="logiName" id="logiName" lay-verType="tips" lay-verify="required|verifylogiName" class="layui-input" placeholder="请输入物流公司名称" lay-reqText="请输入物流公司名称" value="{{d.params.data.logiName || '' }}" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过50个字符内容</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="logiCode" class="layui-form-label">物流公司编码</label>
+            <div class="layui-input-inline">
+                <input name="logiCode" id="logiCode" lay-verType="tips" lay-verify="required|verifylogiCode" class="layui-input" placeholder="请输入物流公司编码" lay-reqText="请输入物流公司编码" value="{{d.params.data.logiCode || '' }}" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过50个字符内容</div>
+        </div>
+
+        <div class="layui-form-item" pane>
+            <label for="isDefault" class="layui-form-label">是否默认</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="isDefault" id="isDefault" {{ d.params.data.isDefault ? 'checked' : '' }} lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">配送方式排序 越小越靠前</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="sort" id="sort" lay-verType="tips" lay-verify="required|number" class="layui-input" value="{{d.params.data.sort || '' }}" placeholder="请输入配送方式排序 越小越靠前" lay-reqText="请输入配送方式排序 越小越靠前并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="status" class="layui-form-label">状态 1=正常 2=停用</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="status" id="status" lay-verType="tips" lay-verify="required|number" class="layui-input" value="{{d.params.data.status || '' }}" placeholder="请输入状态 1=正常 2=停用" lay-reqText="请输入状态 1=正常 2=停用并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item" pane>
+            <label for="isfreePostage" class="layui-form-label">是否包邮</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="isfreePostage" id="isfreePostage" {{ d.params.data.isfreePostage ? 'checked' : '' }} lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="areaFee" class="layui-form-label">地区配送费用</label>
+            <div class="layui-input-inline">
+                <input name="areaFee" id="areaFee" lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入地区配送费用" lay-reqText="请输入地区配送费用" value="{{d.params.data.areaFee || '' }}" />
+
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过-1个字符内容</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="goodsMoney" class="layui-form-label">商品总额满多少免运费</label>
+            <div class="layui-input-inline">
+                <input name="goodsMoney" id="goodsMoney" lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入商品总额满多少免运费" lay-reqText="请输入商品总额满多少免运费" value="{{d.params.data.goodsMoney || '' }}" />
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <input type="button" class="layui-btn" lay-submit lay-filter="LAY-app-CoreCmsShip-editForm-submit" id="LAY-app-CoreCmsShip-editForm-submit" value="确认编辑">
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    var debug = layui.setter.debug;
+    layui.data.sendParams = function (d) {
+        //开启调试情况下获取接口赋值数据
+        if (debug) { console.log(d.params.data); }
+        layui.use(['admin', 'form', 'laydate', 'upload', 'coreHelper', 'cropperImg'],
+            function () {
+                var $ = layui.$
+                    , form = layui.form
+                    , admin = layui.admin
+                    , laydate = layui.laydate
+                    , upload = layui.upload
+                    , cropperImg = layui.cropperImg
+                    , coreHelper = layui.coreHelper;
+
+                form.verify({
+
+                    verifyname: [/^[\S]{0,50}$/, '配送方式名称最大只允许输入50位字符，且不能出现空格'],
+                    verifylogiName: [/^[\S]{0,50}$/, '物流公司名称最大只允许输入50位字符，且不能出现空格'],
+                    verifylogiCode: [/^[\S]{0,50}$/, '物流公司编码最大只允许输入50位字符，且不能出现空格'],
+                });
+                //重载form
+                form.render(null, 'LAY-app-CoreCmsShip-editForm');
+            })
+    };
+</script>

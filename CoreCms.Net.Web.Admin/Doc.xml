@@ -1,0 +1,934 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoreCms.Net.Web.Admin</name>
+    </assembly>
+    <members>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.DemoController">
+            <summary>
+                演示类
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.DemoController.#ctor">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.DemoController.Index">
+            <summary>
+                默认首页
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.LoginController">
+            <summary>
+            用户授权登录
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.LoginController.#ctor(CoreCms.Net.Auth.Policys.PermissionRequirement,CoreCms.Net.IServices.ISysUserServices,CoreCms.Net.IServices.ISysRoleMenuServices,Microsoft.AspNetCore.Http.IHttpContextAccessor,CoreCms.Net.IRepository.ISysLoginRecordRepository)">
+            <summary>
+            构造函数注入
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.LoginController.GetJwtToken(CoreCms.Net.Model.FromBody.FMLogin)">
+            <summary>
+            获取JWT的授权
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.LoginController.RefreshToken(System.String)">
+            <summary>
+            请求刷新Token（以旧换新）
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.ToolsController">
+            <summary>
+                后端常用方法
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.#ctor(CoreCms.Net.Auth.HttpContextUser.IHttpContextUser,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysUserServices,CoreCms.Net.IServices.ISysRoleServices,CoreCms.Net.IServices.ISysMenuServices,CoreCms.Net.IServices.ISysUserRoleServices,CoreCms.Net.IServices.ISysOrganizationServices,CoreCms.Net.CodeGenerator.Services.ICodeGeneratorServices,CoreCms.Net.IServices.ISysLoginRecordServices,CoreCms.Net.IServices.ISysNLogRecordsServices,Microsoft.Extensions.Options.IOptions{CoreCms.Net.Model.ViewModels.Options.FilesStorageOptions},CoreCms.Net.IServices.ISysRoleMenuServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetUserInfo">
+            <summary>
+                获取登录用户用户信息(用于面板展示)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetEditUserInfo">
+            <summary>
+                获取登录用户用户全部信息(用于编辑个人信息)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetManagerRoles">
+            <summary>
+                获取角色列表信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.EditLoginUserPassWord(CoreCms.Net.Model.FromBody.FMEditLoginUserPassWord)">
+            <summary>
+                获取登录用户用户信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.EditLoginUserInfo(CoreCms.Net.Model.FromBody.EditLoginUserInfo)">
+            <summary>
+                用户编辑个人非安全隐私数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetAllControllerAndActionByAssembly">
+            <summary>
+                反射获取后端Api的controller和action
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.UploadFiles">
+            <summary>
+                通用上传接口
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.UploadFilesFByBase64(CoreCms.Net.Model.FromBody.FMBase64Post)">
+            <summary>
+                裁剪Base64上传
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.CkEditorUploadFiles">
+            <summary>
+                CKEditor编辑上传接口
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetNavs">
+            <summary>
+                根据用户权限获取对应左侧菜单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetMenus(System.Collections.Generic.List{CoreCms.Net.Model.Entities.SysMenu},System.Int32)">
+            <summary>
+                迭代方法
+            </summary>
+            <param name="oldNavs"></param>
+            <param name="parentId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetSysLoginRecord">
+            <summary>
+                获取最近登录日志
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetSysNLogRecords">
+            <summary>
+                获取全局Nlog日志
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController">
+            <summary>
+                数据字典表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysDictionaryServices,CoreCms.Net.IServices.ISysDictionaryDataServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.DoCreate(CoreCms.Net.Model.Entities.SysDictionary)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.DoEdit(CoreCms.Net.Model.Entities.SysDictionary)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController">
+            <summary>
+                数据字典项表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysDictionaryDataServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.DoCreate(CoreCms.Net.Model.Entities.SysDictionaryData)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.DoEdit(CoreCms.Net.Model.Entities.SysDictionaryData)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysDictionaryDataController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController">
+            <summary>
+                登录日志表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysLoginRecordServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysLoginRecordController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysMenuController">
+             <summary>
+             菜单表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysMenuServices)">
+             <summary>
+             构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.GetPageList">
+            <summary>
+            获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.GetIndex">
+            <summary>
+            首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.GetCreate">
+            <summary>
+            创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.DoCreate(CoreCms.Net.Model.Entities.SysMenu)">
+            <summary>
+            创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+            编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.DoEdit(CoreCms.Net.Model.Entities.SysMenu)">
+            <summary>
+            编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+            单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysMenuController.ImportButtons(CoreCms.Net.Model.FromBody.FMSysMenuToImportButton)">
+            <summary>
+            单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController">
+            <summary>
+                Nlog记录表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysNLogRecordsServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysNLogRecordsController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController">
+            <summary>
+                操作日志表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysOperRecordServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.DoCreate(CoreCms.Net.Model.Entities.SysOperRecord)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.DoEdit(CoreCms.Net.Model.Entities.SysOperRecord)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOperRecordController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController">
+             <summary>
+             组织机构表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysOrganizationServices,CoreCms.Net.IServices.ISysDictionaryServices,CoreCms.Net.IServices.ISysDictionaryDataServices)">
+             <summary>
+             构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.GetPageList">
+            <summary>
+            获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.GetIndex">
+            <summary>
+            首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.GetCreate">
+            <summary>
+            创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.DoCreate(CoreCms.Net.Model.Entities.SysOrganization)">
+            <summary>
+            创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+            编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.DoEdit(CoreCms.Net.Model.Entities.SysOrganization)">
+            <summary>
+            编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+            单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysOrganizationController.DoSetSysOrganizationLeader(CoreCms.Net.Model.FromBody.FMDoSetSysOrganizationLeaderPost)">
+            <summary>
+            设置leader
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysRoleController">
+            <summary>
+                角色表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysRoleServices,CoreCms.Net.IServices.ISysMenuServices,CoreCms.Net.IServices.ISysRoleMenuServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.DoCreate(CoreCms.Net.Model.Entities.SysRole)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.DoEdit(CoreCms.Net.Model.Entities.SysRole)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetRoleSet(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                获取权限设置
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.GetSysMenu(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                获取菜单
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleController.DoSetSysMenu(CoreCms.Net.Model.FromBody.FMIntIdByListIntData)">
+            <summary>
+                设置权限
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController">
+            <summary>
+                角色菜单关联表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysRoleMenuServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.DoCreate(CoreCms.Net.Model.Entities.SysRoleMenu)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.DoEdit(CoreCms.Net.Model.Entities.SysRoleMenu)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysRoleMenuController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysUserController">
+            <summary>
+                用户表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysUserServices,CoreCms.Net.IServices.ISysRoleServices,CoreCms.Net.IServices.ISysUserRoleServices,CoreCms.Net.IServices.ISysOrganizationServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.DoCreate(CoreCms.Net.Model.Entities.SysUser)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.DoEdit(CoreCms.Net.Model.Entities.SysUser)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.DoSetState(CoreCms.Net.Model.FromBody.FMUpdateBoolDataByIntId)">
+            <summary>
+                设置是否锁定
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController">
+            <summary>
+                用户角色关联表
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysUserRoleServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.GetCreate">
+            <summary>
+                创建数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.DoCreate(CoreCms.Net.Model.Entities.SysUserRole)">
+            <summary>
+                创建提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.GetEdit(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                编辑数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.DoEdit(CoreCms.Net.Model.Entities.SysUserRole)">
+            <summary>
+                编辑提交
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserRoleController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Program">
+            <summary>
+                初始化
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Program.Main(System.String[])">
+            <summary>
+                启动配置
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Program.CreateHostBuilder(System.String[])">
+            <summary>
+                创建启动支撑
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Startup">
+            <summary>
+                启动配置
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+                构造函数
+            </summary>
+            <param name="configuration"></param>
+            <param name="env"></param>
+        </member>
+        <member name="P:CoreCms.Net.Web.Admin.Startup.Configuration">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:CoreCms.Net.Web.Admin.Startup.Env">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+                This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+            <summary>
+                Autofac服务工厂
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+                This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+    </members>
+</doc>

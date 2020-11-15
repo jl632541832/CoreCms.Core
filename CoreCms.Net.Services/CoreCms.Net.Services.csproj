@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="MediatR" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.8" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreCms.Net.Auth\CoreCms.Net.Auth.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Caching\CoreCms.Net.Caching.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Configuration\CoreCms.Net.Configuration.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.Core\CoreCms.Net.Core.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.IRepository\CoreCms.Net.IRepository.csproj" />
+    <ProjectReference Include="..\CoreCms.Net.IServices\CoreCms.Net.IServices.csproj" />
+  </ItemGroup>
+
+</Project>

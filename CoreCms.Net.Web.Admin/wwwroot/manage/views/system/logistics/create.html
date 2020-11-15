@@ -1,0 +1,64 @@
+<script type="text/html" template lay-done="layui.data.done(d);">
+    <div class="layui-form layui-alone-form layui-form-pane" lay-filter="LAY-app-CoreCmsLogistics-createForm" id="LAY-app-CoreCmsLogistics-createForm">
+
+        <div class="layui-form-item">
+            <label for="logiName" class="layui-form-label">物流公司名称</label>
+            <div class="layui-input-inline">
+                <input name="logiName" id="logiName"  lay-verType="tips" lay-verify="required|verifylogiName" class="layui-input" lay-reqText="请输入物流公司名称" placeholder="请输入物流公司名称" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过30个字符内容</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="logiCode" class="layui-form-label">物流公司编码</label>
+            <div class="layui-input-inline">
+                <input name="logiCode" id="logiCode"  lay-verType="tips" lay-verify="required|verifylogiCode" class="layui-input" lay-reqText="请输入物流公司编码" placeholder="请输入物流公司编码" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入不超过50个字符内容</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">排序</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" max="999999" name="sort" id="sort"  lay-verType="tips" lay-verify="required|number" class="layui-input" value="1" placeholder="请输入排序" lay-reqText="请输入排序并为数字" />
+            </div>
+            <div class="layui-form-mid layui-word-aux">请输入数字</div>
+        </div>
+
+        <div class="layui-form-item" pane>
+            <label for="isDelete" class="layui-form-label">是否删除</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="isDelete" id="isDelete" lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <input type="button" class="layui-btn" lay-submit lay-filter="LAY-app-CoreCmsLogistics-createForm-submit" id="LAY-app-CoreCmsLogistics-createForm-submit" value="确认添加">
+        </div>
+    </div>
+</script>
+<script>
+    var debug = layui.setter.debug;
+    layui.data.done = function (d) {
+        //开启调试情况下获取接口赋值数据
+        if (debug) { console.log(d.params.data); }
+        layui.use(['admin', 'form', 'laydate', 'upload', 'coreHelper', 'cropperImg'],
+            function () {
+                var $ = layui.$
+                    , form = layui.form
+                    , admin = layui.admin
+                    , laydate = layui.laydate
+                    , upload = layui.upload
+                    , cropperImg = layui.cropperImg
+                    , coreHelper = layui.coreHelper;
+
+                form.verify({
+
+                    verifylogiName: [/^[\S]{0,30}$/, '物流公司名称最大只允许输入30位字符，且不能出现空格'],
+                    verifylogiCode: [/^[\S]{0,50}$/, '物流公司编码最大只允许输入50位字符，且不能出现空格'],
+                });
+                //重载form
+                form.render(null, 'LAY-app-CoreCmsLogistics-createForm');
+            })
+    };
+</script>

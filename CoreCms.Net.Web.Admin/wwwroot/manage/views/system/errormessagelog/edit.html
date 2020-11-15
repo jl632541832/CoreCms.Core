@@ -1,0 +1,208 @@
+<script type="text/html" template lay-done="layui.data.sendParams(d);">
+    <div class="layui-form layui-alone-form layui-form-pane" lay-filter="LAY-app-CoreCmsErrorMessageLog-editForm" id="LAY-app-CoreCmsErrorMessageLog-editForm">
+	    <input type="hidden" name="id"  value="[[d.params.data.id || '' ]]" />
+	    <div class="layui-form-item">
+            <label for="id" class="layui-form-label  layui-form-required">序列</label>
+            <div class="layui-input-block">
+                <input  type="number" min="0" max="999999" name="id"   lay-verType="tips" lay-verify="required|number" class="layui-input" value="[[d.params.data.id || '' ]]" placeholder="请输入序列" lay-reqText="请输入序列并为数字"  />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="msgType" class="layui-form-label  layui-form-required">消息类型</label>
+            <div class="layui-input-block">
+            <input name="msgType"   lay-verType="tips" lay-verify="required|verifymsgType" class="layui-input" placeholder="请输入消息类型" lay-reqText="请输入消息类型"  value="[[d.params.data.msgType || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="message" class="layui-form-label  layui-form-required">消息内容</label>
+            <div class="layui-input-block">
+            <input name="message"   lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入消息内容" lay-reqText="请输入消息内容"  value="[[d.params.data.message || '' ]]" />
+            
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="path" class="layui-form-label  layui-form-required">请求路径</label>
+            <div class="layui-input-block">
+            <input name="path"   lay-verType="tips" lay-verify="required|verifypath" class="layui-input" placeholder="请输入请求路径" lay-reqText="请输入请求路径"  value="[[d.params.data.path || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="assembly" class="layui-form-label  layui-form-required">程序集名称</label>
+            <div class="layui-input-block">
+            <input name="assembly"   lay-verType="tips" lay-verify="required|verifyassembly" class="layui-input" placeholder="请输入程序集名称" lay-reqText="请输入程序集名称"  value="[[d.params.data.assembly || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="actionArguments" class="layui-form-label  layui-form-required">异常参数</label>
+            <div class="layui-input-block">
+            <input name="actionArguments"   lay-verType="tips" lay-verify="required|verifyactionArguments" class="layui-input" placeholder="请输入异常参数" lay-reqText="请输入异常参数"  value="[[d.params.data.actionArguments || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="httpMethod" class="layui-form-label  layui-form-required">请求类型</label>
+            <div class="layui-input-block">
+            <input name="httpMethod"   lay-verType="tips" lay-verify="required|verifyhttpMethod" class="layui-input" placeholder="请输入请求类型" lay-reqText="请输入请求类型"  value="[[d.params.data.httpMethod || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="stackTrace" class="layui-form-label  layui-form-required">异常堆栈</label>
+            <div class="layui-input-block">
+            <input name="stackTrace"   lay-verType="tips" lay-verify="required" class="layui-input" placeholder="请输入异常堆栈" lay-reqText="请输入异常堆栈"  value="[[d.params.data.stackTrace || '' ]]" />
+            
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="source" class="layui-form-label  layui-form-required">异常源</label>
+            <div class="layui-input-block">
+            <input name="source"   lay-verType="tips" lay-verify="required|verifysource" class="layui-input" placeholder="请输入异常源" lay-reqText="请输入异常源"  value="[[d.params.data.source || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="ip" class="layui-form-label  layui-form-required">服务器IP 端口</label>
+            <div class="layui-input-block">
+            <input name="ip"   lay-verType="tips" lay-verify="required|verifyip" class="layui-input" placeholder="请输入服务器IP 端口" lay-reqText="请输入服务器IP 端口"  value="[[d.params.data.ip || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="userAgent" class="layui-form-label  layui-form-required">客户端浏览器标识</label>
+            <div class="layui-input-block">
+            <input name="userAgent"   lay-verType="tips" lay-verify="required|verifyuserAgent" class="layui-input" placeholder="请输入客户端浏览器标识" lay-reqText="请输入客户端浏览器标识"  value="[[d.params.data.userAgent || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="dotNetVersion" class="layui-form-label  layui-form-required">.NET解释引擎版本</label>
+            <div class="layui-input-block">
+            <input name="dotNetVersion"   lay-verType="tips" lay-verify="required|verifydotNetVersion" class="layui-input" placeholder="请输入.NET解释引擎版本" lay-reqText="请输入.NET解释引擎版本"  value="[[d.params.data.dotNetVersion || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="dotNetBit" class="layui-form-label  layui-form-required">应用程序池位数</label>
+            <div class="layui-input-block">
+            <input name="dotNetBit"   lay-verType="tips" lay-verify="required|verifydotNetBit" class="layui-input" placeholder="请输入应用程序池位数" lay-reqText="请输入应用程序池位数"  value="[[d.params.data.dotNetBit || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="osVersion" class="layui-form-label  layui-form-required">操作系统类型</label>
+            <div class="layui-input-block">
+            <input name="osVersion"   lay-verType="tips" lay-verify="required|verifyosVersion" class="layui-input" placeholder="请输入操作系统类型" lay-reqText="请输入操作系统类型"  value="[[d.params.data.osVersion || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="osBit" class="layui-form-label  layui-form-required">操作系统位数</label>
+            <div class="layui-input-block">
+            <input name="osBit"   lay-verType="tips" lay-verify="required|verifyosBit" class="layui-input" placeholder="请输入操作系统位数" lay-reqText="请输入操作系统位数"  value="[[d.params.data.osBit || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="cpuCount" class="layui-form-label  layui-form-required">CPU个数</label>
+            <div class="layui-input-block">
+            <input name="cpuCount"   lay-verType="tips" lay-verify="required|verifycpuCount" class="layui-input" placeholder="请输入CPU个数" lay-reqText="请输入CPU个数"  value="[[d.params.data.cpuCount || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="cpuType" class="layui-form-label  layui-form-required">CPU类型</label>
+            <div class="layui-input-block">
+            <input name="cpuType"   lay-verType="tips" lay-verify="required|verifycpuType" class="layui-input" placeholder="请输入CPU类型" lay-reqText="请输入CPU类型"  value="[[d.params.data.cpuType || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="iisVersion" class="layui-form-label  layui-form-required">IIS版本</label>
+            <div class="layui-input-block">
+            <input name="iisVersion"   lay-verType="tips" lay-verify="required|verifyiisVersion" class="layui-input" placeholder="请输入IIS版本" lay-reqText="请输入IIS版本"  value="[[d.params.data.iisVersion || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="type" class="layui-form-label  layui-form-required">请求地址类型</label>
+            <div class="layui-input-block">
+            <input name="type"   lay-verType="tips" lay-verify="required|verifytype" class="layui-input" placeholder="请输入请求地址类型" lay-reqText="请输入请求地址类型"  value="[[d.params.data.type || '' ]]" />
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item" pane>
+            <label for="showException" class="layui-form-label  layui-form-required">是否显示异常界面</label>
+            <div class="layui-input-block">
+                <input type="checkbox" lay-filter="switch" name="showException"   [[ d.params.data.showException ? 'checked' : '' ]] lay-skin="switch" lay-text="开启|关闭">
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="time" class="layui-form-label  layui-form-required">异常发生时间</label>
+            <div class="layui-input-block">
+                <input name="time"  id="editTime-CoreCmsErrorMessageLog-time" type="text" lay-verType="tips" lay-verify="required|datetime" class="layui-input" placeholder="请输入异常发生时间" lay-reqText="请输入异常发生时间"   value="[[d.params.data.time || '' ]]"/>
+            </div>
+        </div>
+	    
+	    <div class="layui-form-item">
+            <label for="method" class="layui-form-label  layui-form-required">异常发生方法</label>
+            <div class="layui-input-block">
+            <input name="method"   lay-verType="tips" lay-verify="required|verifymethod" class="layui-input" placeholder="请输入异常发生方法" lay-reqText="请输入异常发生方法"  value="[[d.params.data.method || '' ]]" />
+            </div>
+        </div>
+	    
+        <div class="layui-form-item text-right">
+            <input type="button" class="layui-btn" lay-submit lay-filter="LAY-app-CoreCmsErrorMessageLog-editForm-submit" id="LAY-app-CoreCmsErrorMessageLog-editForm-submit" value="确认编辑">
+        </div>
+    </div>
+</script>
+<script>
+    var debug= layui.setter.debug;
+    layui.data.sendParams = function (d) {
+        //开启调试情况下获取接口赋值数据
+        if (debug) { console.log(d.params.data); }
+        layui.use(['admin', 'form', 'laydate', 'upload', 'coreHelper', 'cropperImg'],
+        function () {
+            var $ = layui.$
+                , form = layui.form
+                , admin = layui.admin
+                , laydate = layui.laydate
+                , upload = layui.upload
+                , cropperImg = layui.cropperImg
+                , coreHelper = layui.coreHelper;
+        
+            laydate.render({
+                elem: '#editTime-CoreCmsErrorMessageLog-time',
+                type: 'datetime'
+            });
+            form.verify({
+                
+		        verifymsgType: [/^[\S]{0,255}$/,'消息类型最大只允许输入255位字符，且不能出现空格'],
+		        verifypath: [/^[\S]{0,255}$/,'请求路径最大只允许输入255位字符，且不能出现空格'],
+		        verifyassembly: [/^[\S]{0,255}$/,'程序集名称最大只允许输入255位字符，且不能出现空格'],
+		        verifyactionArguments: [/^[\S]{0,255}$/,'异常参数最大只允许输入255位字符，且不能出现空格'],
+		        verifyhttpMethod: [/^[\S]{0,255}$/,'请求类型最大只允许输入255位字符，且不能出现空格'],
+		        verifysource: [/^[\S]{0,255}$/,'异常源最大只允许输入255位字符，且不能出现空格'],
+		        verifyip: [/^[\S]{0,255}$/,'服务器IP 端口最大只允许输入255位字符，且不能出现空格'],
+		        verifyuserAgent: [/^[\S]{0,255}$/,'客户端浏览器标识最大只允许输入255位字符，且不能出现空格'],
+		        verifydotNetVersion: [/^[\S]{0,255}$/,'.NET解释引擎版本最大只允许输入255位字符，且不能出现空格'],
+		        verifydotNetBit: [/^[\S]{0,255}$/,'应用程序池位数最大只允许输入255位字符，且不能出现空格'],
+		        verifyosVersion: [/^[\S]{0,255}$/,'操作系统类型最大只允许输入255位字符，且不能出现空格'],
+		        verifyosBit: [/^[\S]{0,255}$/,'操作系统位数最大只允许输入255位字符，且不能出现空格'],
+		        verifycpuCount: [/^[\S]{0,255}$/,'CPU个数最大只允许输入255位字符，且不能出现空格'],
+		        verifycpuType: [/^[\S]{0,255}$/,'CPU类型最大只允许输入255位字符，且不能出现空格'],
+		        verifyiisVersion: [/^[\S]{0,255}$/,'IIS版本最大只允许输入255位字符，且不能出现空格'],
+		        verifytype: [/^[\S]{0,255}$/,'请求地址类型最大只允许输入255位字符，且不能出现空格'],
+		        verifymethod: [/^[\S]{0,255}$/,'异常发生方法最大只允许输入255位字符，且不能出现空格'],
+            });
+            //重载form
+            form.render(null, 'LAY-app-CoreCmsErrorMessageLog-editForm');
+        })
+    };
+</script>
