@@ -6,7 +6,7 @@ using CoreCms.Net.Model.Entities;
 namespace CoreCms.Net.Services
 {
     /// <summary>
-    ///     登录日志表 接口实现
+    /// 登录日志表 接口实现
     /// </summary>
     public class SysLoginRecordServices : BaseServices<SysLoginRecord>, ISysLoginRecordServices
     {
@@ -15,8 +15,8 @@ namespace CoreCms.Net.Services
 
         public SysLoginRecordServices(IUnitOfWork unitOfWork, ISysLoginRecordRepository dal)
         {
-            _dal = dal;
-            BaseDal = dal;
+            this._dal = dal;
+            base.BaseDal = dal;
             _unitOfWork = unitOfWork;
         }
     }

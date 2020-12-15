@@ -19,7 +19,16 @@ using CoreCms.Net.Middlewares;
 using CoreCms.Net.Model.ViewModels.Options;
 using CoreCms.Net.Model.ViewModels.Sms;
 using CoreCms.Net.Swagger;
+using CoreCms.Net.Task;
 using CoreCms.Net.Utility.Extensions;
+using CoreCms.Net.WeChatService.CustomMessageHandler;
+using CoreCms.Net.WeChatService.MessageHandlers.WebSocket;
+using CoreCms.Net.WeChatService.WxOpenMessageHandler;
+using Essensoft.AspNetCore.Payment.Alipay;
+using Essensoft.AspNetCore.Payment.WeChatPay;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.Dashboard.BasicAuthorization;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +43,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Senparc.CO2NET;
+using Senparc.CO2NET.AspNet;
+using Senparc.NeuChar.MessageHandlers;
+using Senparc.WebSocket;
+using Senparc.Weixin;
+using Senparc.Weixin.Entities;
+using Senparc.Weixin.MP;
+using Senparc.Weixin.MP.MessageHandlers.Middleware;
+using Senparc.Weixin.RegisterServices;
+using Senparc.Weixin.WxOpen;
+using Senparc.Weixin.WxOpen.MessageHandlers.Middleware;
 
 namespace CoreCms.Net.Web.Admin
 {
@@ -86,6 +106,14 @@ namespace CoreCms.Net.Web.Admin
             //使用 SignalR
             services.AddSignalR();
 
+            // 引入Payment 依赖注入(支付宝支付/微信支付)
+            services.AddAlipay();
+            services.AddWeChatPay();
+
+            // 在 appsettings.json 中 配置选项
+            services.Configure<WeChatPayOptions>(Configuration.GetSection("WeChatPay"));
+            services.Configure<AlipayOptions>(Configuration.GetSection("Alipay"));
+
             //注入附件存储配置
             services.Configure<FilesStorageOptions>(Configuration.GetSection("FilesStorage"));
 
@@ -97,11 +125,16 @@ namespace CoreCms.Net.Web.Admin
             //上下文注入
             services.AddHttpContextSetup();
 
+
+            //微信注册
+            services.AddSenparcWeixinServices(Configuration) //Senparc.Weixin 注册（必须）
+                .AddSenparcWebSocket<CustomNetCoreWebSocketMessageHandler>(); //Senparc.WebSocket 注册（按需）
+
             //服务配置中加入AutoFac控制器替换规则。
             services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
 
             //注册mvc，注册razor引擎视图
-            services.AddMvc(options =>
+            services.AddControllersWithViews(options =>
                 {
                     //实体验证
                     options.Filters.Add<RequiredErrorForAdmin>();
@@ -118,10 +151,23 @@ namespace CoreCms.Net.Web.Admin
                     p.SerializerSettings.ContractResolver = new DefaultContractResolver();
                     //设置时间格式
                     p.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                });
+                }).AddRazorRuntimeCompilation();
 
             //凯信通短信配置
             services.Configure<KxtSmsOptions>(Configuration.GetSection("KXTSMS"));
+
+            //注册Hangfire定时任务
+            var isEnabledRedis = AppSettingsHelper.GetContent("RedisCachingConfig", "Enabled").ObjectToBool();
+            if (isEnabledRedis)
+            {
+                services.AddHangfire(x =>
+                    x.UseRedisStorage(AppSettingsHelper.GetContent("RedisCachingConfig", "ConnectionString")));
+            }
+            else
+            {
+                services.AddHangfire(x =>
+                    x.UseSqlServerStorage(AppSettingsHelper.GetContent("ConnectionStrings", "SqlServerConnection")));
+            }
 
         }
 
@@ -199,7 +245,8 @@ namespace CoreCms.Net.Web.Admin
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<SenparcSetting> senparcSetting,
+            IOptions<SenparcWeixinSetting> senparcWeixinSetting)
         {
             // 记录请求与返回数据  (注意开启权限，不然本地无法写入)
             app.UseReuestResponseLog();
@@ -229,6 +276,52 @@ namespace CoreCms.Net.Web.Admin
                 }
             });
 
+            #region Hangfire定时任务
+
+            var queues = new string[] { GlobalEnumVars.HangFireQueuesConfig.@default.ToString(), GlobalEnumVars.HangFireQueuesConfig.apis.ToString(), GlobalEnumVars.HangFireQueuesConfig.web.ToString(), GlobalEnumVars.HangFireQueuesConfig.recurring.ToString() };
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                ServerTimeout = TimeSpan.FromMinutes(4),
+                SchedulePollingInterval = TimeSpan.FromSeconds(15),//秒级任务需要配置短点，一般任务可以配置默认时间，默认15秒
+                ShutdownTimeout = TimeSpan.FromMinutes(30),//超时时间
+                Queues = queues,//队列
+                WorkerCount = Math.Max(Environment.ProcessorCount, 20)//工作线程数，当前允许的最大线程，默认20
+            });
+
+            //授权
+            var filter = new BasicAuthAuthorizationFilter(
+                new BasicAuthAuthorizationFilterOptions
+                {
+                    SslRedirect = false,
+                    // Require secure connection for dashboard
+                    RequireSsl = false,
+                    // Case sensitive login checking
+                    LoginCaseSensitive = false,
+                    // Users
+                    Users = new[]
+                    {
+                        new BasicAuthAuthorizationUser
+                        {
+                            Login = AppSettingsHelper.GetContent("HangFire", "Login"),
+                            PasswordClear = AppSettingsHelper.GetContent("HangFire", "PassWord")
+                        }
+                    }
+                });
+            var options = new DashboardOptions
+            {
+                AppPath = "/",//返回时跳转的地址
+                DisplayStorageConnectionString = false,//是否显示数据库连接信息
+                Authorization = new[] { filter },
+                IsReadOnlyFunc = Context =>
+                {
+                    return false;//是否只读面板
+                }
+            };
+
+            app.UseHangfireDashboard("/job", options); //可以改变Dashboard的url
+            HangfireDispose.HangfireService();
+
+            #endregion
 
             app.UseSwagger().UseSwaggerUI(c =>
             {
@@ -256,18 +349,45 @@ namespace CoreCms.Net.Web.Admin
                 app.UseHsts();
             }
 
+
+
             //配置跨域（CORS）
             app.UseCors("cors");
-            // 跳转https
-            //app.UseHttpsRedirection();
-            // 使用静态文件
-            app.UseStaticFiles();
             // 使用cookie
             app.UseCookiePolicy();
             // 返回错误码
             app.UseStatusCodePages();
             // Routing
             app.UseRouting();
+
+            // 启动 CO2NET 全局注册，必须！
+            app.UseSenparcGlobal(env, senparcSetting.Value, globalRegister => { }, true)
+                .UseSenparcWeixin(senparcWeixinSetting.Value,
+                    weixinRegister =>
+                    {
+                        weixinRegister.RegisterMpAccount(senparcWeixinSetting.Value, "公众号")
+                            .RegisterWxOpenAccount(senparcWeixinSetting.Value, "程序");
+                    });
+            //使用 公众号 MessageHandler 中间件 
+            app.UseMessageHandlerForMp("/WeixinAsync", CustomMessageHandler.GenerateMessageHandler, options =>
+            {
+                options.AccountSettingFunc = context => senparcWeixinSetting.Value;
+                //对 MessageHandler 内异步方法未提供重写时，调用同步方法（按需）
+                options.DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
+            });
+            //使用 小程序 MessageHandler 中间件 
+            app.UseMessageHandlerForWxOpen("/WxOpenAsync", CustomWxOpenMessageHandler.GenerateMessageHandler, options =>
+            {
+                options.DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
+                options.AccountSettingFunc = context => senparcWeixinSetting.Value;
+            });
+
+
+            // 跳转https
+            //app.UseHttpsRedirection();
+            // 使用静态文件
+            app.UseStaticFiles();
+           
             // 先开启认证
             app.UseAuthentication();
             // 然后是授权中间件

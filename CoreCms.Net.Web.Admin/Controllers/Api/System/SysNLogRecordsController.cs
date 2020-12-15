@@ -208,7 +208,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -227,27 +227,19 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysNLogRecordsServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
 
-                var bl = await _sysNLogRecordsServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            var model = await _sysNLogRecordsServices.QueryByIdAsync(entity.id);
+            if (model == null)
+            {
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
 
+            var bl = await _sysNLogRecordsServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
+
         }
 
         #endregion
@@ -265,18 +257,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoBatchDelete([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _sysNLogRecordsServices.DeleteByIdsAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("批量删除", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+
+            var bl = await _sysNLogRecordsServices.DeleteByIdsAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
 
             return new JsonResult(jm);
         }
@@ -296,24 +280,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetDetails([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysNLogRecordsServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysNLogRecordsServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("预览数据", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
+
 
             return new JsonResult(jm);
         }
@@ -333,73 +310,66 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> SelectExportExcel([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _sysNLogRecordsServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
+                p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("序列");
+            row1.CreateCell(1).SetCellValue("时间");
+            row1.CreateCell(2).SetCellValue("级别");
+            row1.CreateCell(3).SetCellValue("事件日志上下文");
+            row1.CreateCell(4).SetCellValue("记录器名字");
+            row1.CreateCell(5).SetCellValue("消息");
+            row1.CreateCell(6).SetCellValue("名称");
+            row1.CreateCell(7).SetCellValue("ip");
+            row1.CreateCell(8).SetCellValue("请求方式");
+            row1.CreateCell(9).SetCellValue("请求地址");
+            row1.CreateCell(10).SetCellValue("是否授权");
+            row1.CreateCell(11).SetCellValue("授权类型");
+            row1.CreateCell(12).SetCellValue("身份认证");
+            row1.CreateCell(13).SetCellValue("异常信息");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
             {
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _sysNLogRecordsServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
-                    p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("序列");
-                row1.CreateCell(1).SetCellValue("时间");
-                row1.CreateCell(2).SetCellValue("级别");
-                row1.CreateCell(3).SetCellValue("事件日志上下文");
-                row1.CreateCell(4).SetCellValue("记录器名字");
-                row1.CreateCell(5).SetCellValue("消息");
-                row1.CreateCell(6).SetCellValue("名称");
-                row1.CreateCell(7).SetCellValue("ip");
-                row1.CreateCell(8).SetCellValue("请求方式");
-                row1.CreateCell(9).SetCellValue("请求地址");
-                row1.CreateCell(10).SetCellValue("是否授权");
-                row1.CreateCell(11).SetCellValue("授权类型");
-                row1.CreateCell(12).SetCellValue("身份认证");
-                row1.CreateCell(13).SetCellValue("异常信息");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].LogDate.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].LogLevel);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].LogType);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].Logger);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].Message);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].MachineName);
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].MachineIp);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].NetRequestMethod);
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].NetRequestUrl);
-                    rowtemp.CreateCell(10).SetCellValue(listmodel[i].NetUserIsauthenticated);
-                    rowtemp.CreateCell(11).SetCellValue(listmodel[i].NetUserAuthtype);
-                    rowtemp.CreateCell(12).SetCellValue(listmodel[i].NetUserIdentity);
-                    rowtemp.CreateCell(13).SetCellValue(listmodel[i].Exception);
-                }
-
-                // 导出excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysNLogRecords导出(选择结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].LogDate.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].LogLevel);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].LogType);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].Logger);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].Message);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].MachineName);
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].MachineIp);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].NetRequestMethod);
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].NetRequestUrl);
+                rowtemp.CreateCell(10).SetCellValue(listmodel[i].NetUserIsauthenticated);
+                rowtemp.CreateCell(11).SetCellValue(listmodel[i].NetUserAuthtype);
+                rowtemp.CreateCell(12).SetCellValue(listmodel[i].NetUserIdentity);
+                rowtemp.CreateCell(13).SetCellValue(listmodel[i].Exception);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("选择导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
-            }
+
+            // 导出excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysNLogRecords导出(选择结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
 
             return new JsonResult(jm);
         }
@@ -418,128 +388,121 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> QueryExportExcel()
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var where = PredicateBuilder.True<SysNLogRecords>();
+            //查询筛选
+
+            //序列 int
+            var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
+            if (id > 0) @where = @where.And(p => p.id == id);
+            //时间 datetime
+            var LogDate = Request.Form["LogDate"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(LogDate))
             {
-                var where = PredicateBuilder.True<SysNLogRecords>();
-                //查询筛选
-
-                //序列 int
-                var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
-                if (id > 0) @where = @where.And(p => p.id == id);
-                //时间 datetime
-                var LogDate = Request.Form["LogDate"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(LogDate))
-                {
-                    var dt = LogDate.ObjectToDate();
-                    where = where.And(p => p.LogDate > dt);
-                }
-
-                //级别 nvarchar
-                var LogLevel = Request.Form["LogLevel"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(LogLevel)) @where = @where.And(p => p.LogLevel.Contains(LogLevel));
-                //事件日志上下文 nvarchar
-                var LogType = Request.Form["LogType"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(LogType)) @where = @where.And(p => p.LogType.Contains(LogType));
-                //记录器名字 nvarchar
-                var Logger = Request.Form["Logger"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(Logger)) @where = @where.And(p => p.Logger.Contains(Logger));
-                //消息 nvarchar
-                var Message = Request.Form["Message"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(Message)) @where = @where.And(p => p.Message.Contains(Message));
-                //名称 nvarchar
-                var MachineName = Request.Form["MachineName"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(MachineName)) @where = @where.And(p => p.MachineName.Contains(MachineName));
-                //ip nvarchar
-                var MachineIp = Request.Form["MachineIp"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(MachineIp)) @where = @where.And(p => p.MachineIp.Contains(MachineIp));
-                //请求方式 nvarchar
-                var NetRequestMethod = Request.Form["NetRequestMethod"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(NetRequestMethod))
-                    @where = @where.And(p => p.NetRequestMethod.Contains(NetRequestMethod));
-                //请求地址 nvarchar
-                var NetRequestUrl = Request.Form["NetRequestUrl"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(NetRequestUrl))
-                    @where = @where.And(p => p.NetRequestUrl.Contains(NetRequestUrl));
-                //是否授权 nvarchar
-                var NetUserIsauthenticated = Request.Form["NetUserIsauthenticated"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(NetUserIsauthenticated))
-                    @where = @where.And(p => p.NetUserIsauthenticated.Contains(NetUserIsauthenticated));
-                //授权类型 nvarchar
-                var NetUserAuthtype = Request.Form["NetUserAuthtype"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(NetUserAuthtype))
-                    @where = @where.And(p => p.NetUserAuthtype.Contains(NetUserAuthtype));
-                //身份认证 nvarchar
-                var NetUserIdentity = Request.Form["NetUserIdentity"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(NetUserIdentity))
-                    @where = @where.And(p => p.NetUserIdentity.Contains(NetUserIdentity));
-                //异常信息 nvarchar
-                var Exception = Request.Form["Exception"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(Exception)) @where = @where.And(p => p.Exception.Contains(Exception));
-                //获取数据
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _sysNLogRecordsServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("序列");
-                row1.CreateCell(1).SetCellValue("时间");
-                row1.CreateCell(2).SetCellValue("级别");
-                row1.CreateCell(3).SetCellValue("事件日志上下文");
-                row1.CreateCell(4).SetCellValue("记录器名字");
-                row1.CreateCell(5).SetCellValue("消息");
-                row1.CreateCell(6).SetCellValue("名称");
-                row1.CreateCell(7).SetCellValue("ip");
-                row1.CreateCell(8).SetCellValue("请求方式");
-                row1.CreateCell(9).SetCellValue("请求地址");
-                row1.CreateCell(10).SetCellValue("是否授权");
-                row1.CreateCell(11).SetCellValue("授权类型");
-                row1.CreateCell(12).SetCellValue("身份认证");
-                row1.CreateCell(13).SetCellValue("异常信息");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].LogDate.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].LogLevel);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].LogType);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].Logger);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].Message);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].MachineName);
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].MachineIp);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].NetRequestMethod);
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].NetRequestUrl);
-                    rowtemp.CreateCell(10).SetCellValue(listmodel[i].NetUserIsauthenticated);
-                    rowtemp.CreateCell(11).SetCellValue(listmodel[i].NetUserAuthtype);
-                    rowtemp.CreateCell(12).SetCellValue(listmodel[i].NetUserIdentity);
-                    rowtemp.CreateCell(13).SetCellValue(listmodel[i].Exception);
-                }
-
-                // 写入到excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysNLogRecords导出(查询结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var dt = LogDate.ObjectToDate();
+                where = where.And(p => p.LogDate > dt);
             }
-            catch (Exception ex)
+
+            //级别 nvarchar
+            var LogLevel = Request.Form["LogLevel"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(LogLevel)) @where = @where.And(p => p.LogLevel.Contains(LogLevel));
+            //事件日志上下文 nvarchar
+            var LogType = Request.Form["LogType"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(LogType)) @where = @where.And(p => p.LogType.Contains(LogType));
+            //记录器名字 nvarchar
+            var Logger = Request.Form["Logger"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(Logger)) @where = @where.And(p => p.Logger.Contains(Logger));
+            //消息 nvarchar
+            var Message = Request.Form["Message"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(Message)) @where = @where.And(p => p.Message.Contains(Message));
+            //名称 nvarchar
+            var MachineName = Request.Form["MachineName"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(MachineName)) @where = @where.And(p => p.MachineName.Contains(MachineName));
+            //ip nvarchar
+            var MachineIp = Request.Form["MachineIp"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(MachineIp)) @where = @where.And(p => p.MachineIp.Contains(MachineIp));
+            //请求方式 nvarchar
+            var NetRequestMethod = Request.Form["NetRequestMethod"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(NetRequestMethod))
+                @where = @where.And(p => p.NetRequestMethod.Contains(NetRequestMethod));
+            //请求地址 nvarchar
+            var NetRequestUrl = Request.Form["NetRequestUrl"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(NetRequestUrl))
+                @where = @where.And(p => p.NetRequestUrl.Contains(NetRequestUrl));
+            //是否授权 nvarchar
+            var NetUserIsauthenticated = Request.Form["NetUserIsauthenticated"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(NetUserIsauthenticated))
+                @where = @where.And(p => p.NetUserIsauthenticated.Contains(NetUserIsauthenticated));
+            //授权类型 nvarchar
+            var NetUserAuthtype = Request.Form["NetUserAuthtype"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(NetUserAuthtype))
+                @where = @where.And(p => p.NetUserAuthtype.Contains(NetUserAuthtype));
+            //身份认证 nvarchar
+            var NetUserIdentity = Request.Form["NetUserIdentity"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(NetUserIdentity))
+                @where = @where.And(p => p.NetUserIdentity.Contains(NetUserIdentity));
+            //异常信息 nvarchar
+            var Exception = Request.Form["Exception"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(Exception)) @where = @where.And(p => p.Exception.Contains(Exception));
+            //获取数据
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _sysNLogRecordsServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("序列");
+            row1.CreateCell(1).SetCellValue("时间");
+            row1.CreateCell(2).SetCellValue("级别");
+            row1.CreateCell(3).SetCellValue("事件日志上下文");
+            row1.CreateCell(4).SetCellValue("记录器名字");
+            row1.CreateCell(5).SetCellValue("消息");
+            row1.CreateCell(6).SetCellValue("名称");
+            row1.CreateCell(7).SetCellValue("ip");
+            row1.CreateCell(8).SetCellValue("请求方式");
+            row1.CreateCell(9).SetCellValue("请求地址");
+            row1.CreateCell(10).SetCellValue("是否授权");
+            row1.CreateCell(11).SetCellValue("授权类型");
+            row1.CreateCell(12).SetCellValue("身份认证");
+            row1.CreateCell(13).SetCellValue("异常信息");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
             {
-                NLogHelper.Error("查询导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].LogDate.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].LogLevel);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].LogType);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].Logger);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].Message);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].MachineName);
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].MachineIp);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].NetRequestMethod);
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].NetRequestUrl);
+                rowtemp.CreateCell(10).SetCellValue(listmodel[i].NetUserIsauthenticated);
+                rowtemp.CreateCell(11).SetCellValue(listmodel[i].NetUserAuthtype);
+                rowtemp.CreateCell(12).SetCellValue(listmodel[i].NetUserIdentity);
+                rowtemp.CreateCell(13).SetCellValue(listmodel[i].Exception);
             }
+
+            // 写入到excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysNLogRecords导出(查询结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
 
             return new JsonResult(jm);
         }

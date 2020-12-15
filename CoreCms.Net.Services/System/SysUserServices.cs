@@ -1,14 +1,14 @@
-using System.Linq;
-using System.Threading.Tasks;
 using CoreCms.Net.IRepository;
 using CoreCms.Net.IRepository.UnitOfWork;
 using CoreCms.Net.IServices;
 using CoreCms.Net.Model.Entities;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreCms.Net.Services
 {
     /// <summary>
-    ///     用户表 接口实现
+    /// 用户表 接口实现
     /// </summary>
     public class SysUserServices : BaseServices<SysUser>, ISysUserServices
     {
@@ -17,25 +17,25 @@ namespace CoreCms.Net.Services
         private readonly ISysUserRoleRepository _sysUserRoleRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public SysUserServices(IUnitOfWork unitOfWork, ISysUserRepository dal, ISysRoleRepository sysRoleRepository,
-            ISysUserRoleRepository sysUserRoleRepository)
+        public SysUserServices(IUnitOfWork unitOfWork, ISysUserRepository dal, ISysRoleRepository sysRoleRepository, ISysUserRoleRepository sysUserRoleRepository)
         {
-            _dal = dal;
-            BaseDal = dal;
+            this._dal = dal;
+            base.BaseDal = dal;
             _unitOfWork = unitOfWork;
             _sysRoleRepository = sysRoleRepository;
             _sysUserRoleRepository = sysUserRoleRepository;
         }
 
         /// <summary>
+        ///
         /// </summary>
         /// <param name="loginName"></param>
         /// <param name="loginPwd"></param>
         /// <returns></returns>
         public async Task<string> GetUserRoleNameStr(string loginName, string loginPwd)
         {
-            var roleName = "";
-            var user = await QueryByClauseAsync(a => a.userName == loginName && a.passWord == loginPwd);
+            string roleName = "";
+            var user = await base.QueryByClauseAsync(a => a.userName == loginName && a.passWord == loginPwd);
             var roleList = await _sysRoleRepository.QueryListByClauseAsync(a => a.deleted == false);
             if (user != null)
             {
@@ -48,7 +48,6 @@ namespace CoreCms.Net.Services
                     roleName = string.Join(',', roles.Select(r => r.roleCode).ToArray());
                 }
             }
-
             return roleName;
         }
     }

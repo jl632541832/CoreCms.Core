@@ -138,17 +138,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysMenu entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                entity.createTime = DateTime.Now; ;
-                jm = await _sysMenuServices.InsertAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+
+            entity.createTime = DateTime.Now; ;
+            jm = await _sysMenuServices.InsertAsync(entity);
+
             return new JsonResult(jm);
         }
         #endregion
@@ -165,23 +158,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _sysMenuServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _sysMenuServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                jm.code = 0;
-                jm.data = model;
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            jm.code = 0;
+            jm.data = model;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -197,18 +183,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         [Description("编辑提交")]
         public async Task<JsonResult> DoEdit([FromBody] SysMenu entity)
         {
-            var jm = new AdminUiCallBack();
-            try
-            {
-                //事物处理过程结束
-                jm = await _sysMenuServices.UpdateAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            var jm = await _sysMenuServices.UpdateAsync(entity);
             return new JsonResult(jm);
         }
         #endregion
@@ -225,17 +200,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                jm = await _sysMenuServices.DeleteByIdAsync(entity.id);
-                return new JsonResult(jm);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+
+            jm = await _sysMenuServices.DeleteByIdAsync(entity.id);
             return new JsonResult(jm);
+
         }
         #endregion
 
@@ -251,51 +219,44 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> ImportButtons([FromBody] FMSysMenuToImportButton entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            if (entity.data.Count <= 0)
             {
-                if (entity.data.Count <= 0)
-                {
-                    jm.msg = "请选择要导入的按钮";
-                    return new JsonResult(jm);
-                }
-
-                //清空旗下按钮
-                await _sysMenuServices.DeleteAsync(p => p.parentId == entity.data[0].menuId && p.menuType == 1);
-
-                var list = new List<SysMenu>();
-                for (var index = 0; index < entity.data.Count; index++)
-                {
-                    var p = entity.data[index];
-                    list.Add(new SysMenu()
-                    {
-                        parentId = p.menuId,
-                        identificationCode = p.actionName,
-                        menuName = p.description,
-                        component = "/Api/" + p.controllerName + "/" + p.actionName,
-                        menuType = 1,
-                        sortNumber = index,
-                        authority = p.controllerName + ":" + p.actionName,
-                        hide = false,
-                        deleted = false,
-                        createTime = DateTime.Now
-                    });
-                }
-
-                var bl = await _sysMenuServices.InsertAsync(list) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-                if (bl)
-                {
-                    await _sysMenuServices.UpdateCaChe();
-                }
+                jm.msg = "请选择要导入的按钮";
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
+
+            //清空旗下按钮
+            await _sysMenuServices.DeleteAsync(p => p.parentId == entity.data[0].menuId && p.menuType == 1);
+
+            var list = new List<SysMenu>();
+            for (var index = 0; index < entity.data.Count; index++)
             {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
+                var p = entity.data[index];
+                list.Add(new SysMenu()
+                {
+                    parentId = p.menuId,
+                    identificationCode = p.actionName,
+                    menuName = p.description,
+                    component = "/Api/" + p.controllerName + "/" + p.actionName,
+                    menuType = 1,
+                    sortNumber = index,
+                    authority = p.controllerName + ":" + p.actionName,
+                    hide = false,
+                    deleted = false,
+                    createTime = DateTime.Now
+                });
+            }
+
+            var bl = await _sysMenuServices.InsertAsync(list) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            if (bl)
+            {
+                await _sysMenuServices.UpdateCaChe();
             }
             return new JsonResult(jm);
+
         }
         #endregion
 

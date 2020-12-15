@@ -182,17 +182,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         [Description("创建提交")]
         public async Task<JsonResult> DoCreate([FromBody]{{ModelClassName}} entity)
         {
-            var jm = new AdminUiCallBack();
-            try
-            {
-                jm = await _{{ModelClassName}}Services.InsertAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            var jm = await _{{ModelClassName}}Services.InsertAsync(entity);
             return new JsonResult(jm);
         }
         #endregion
@@ -209,23 +199,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody]FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                jm.code = 0;
-                jm.data = model;
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            jm.code = 0;
+            jm.data = model;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -241,17 +224,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         [Description("编辑提交")]
         public async Task<JsonResult> DoEdit([FromBody]{{ModelClassName}} entity)
         {
-            var jm = new AdminUiCallBack();
-            try
-            {
-                jm = await _{{ModelClassName}}Services.UpdateAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            var jm = await _{{ModelClassName}}Services.UpdateAsync(entity);
             return new JsonResult(jm);
         }
         #endregion
@@ -268,21 +241,15 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody]FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _{{ModelClassName}}Services.ExistsAsync(p => p.id == entity.id);
+            if (!model)
             {
-                var model = await _{{ModelClassName}}Services.ExistsAsync(p => p.id == entity.id);
-                if (!model)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-					return new JsonResult(jm);
-                }
-                jm = await _{{ModelClassName}}Services.DeleteByIdAsync(entity.id);
+                jm.msg = GlobalConstVars.DataisNo;
+				return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+            jm = await _{{ModelClassName}}Services.DeleteByIdAsync(entity.id);
+
             return new JsonResult(jm);
         }
         #endregion
@@ -298,17 +265,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         [Description("批量删除")]
         public async Task<JsonResult> DoBatchDelete([FromBody]FMArrayIntIds entity)
         {
-            var jm = new AdminUiCallBack();
-            try
-            {
-                jm = await _{{ModelClassName}}Services.DeleteByIdsAsync(entity.id);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("批量删除", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+            var jm = await _{{ModelClassName}}Services.DeleteByIdsAsync(entity.id);
             return new JsonResult(jm);
         }
 
@@ -326,23 +283,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetDetails([FromBody]FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                jm.code = 0;
-                jm.data = model;
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("预览数据", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            jm.code = 0;
+            jm.data = model;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -359,61 +309,53 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> SelectExportExcel([FromBody]FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var mySheet = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listModel = await _{{ModelClassName}}Services.QueryListByClauseAsync(p => entity.id.Contains(p.id), p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var headerRow = mySheet.CreateRow(0);
+            var headerStyle = ExcelHelper.GetHeaderStyle(book);
+{% for field in ModelFields %}
+            var cell{{ forloop.index0  }} = headerRow.CreateCell({{ forloop.index0  }});
+            cell{{ forloop.index0  }}.SetCellValue("{{field.ColumnDescription}}");
+            cell{{ forloop.index0  }}.CellStyle = headerStyle;
+            mySheet.SetColumnWidth({{ forloop.index0  }}, 10 * 256);
+{% endfor %}
+            headerRow.Height = 30 * 20;
+            var commonCellStyle = ExcelHelper.GetCommonStyle(book);
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listModel.Count; i++)
             {
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var mySheet = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listModel = await _{{ModelClassName}}Services.QueryListByClauseAsync(p => entity.id.Contains(p.id), p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var headerRow = mySheet.CreateRow(0);
-                var headerStyle = ExcelHelper.GetHeaderStyle(book);
-    {% for field in ModelFields %}
-                var cell{{ forloop.index0  }} = headerRow.CreateCell({{ forloop.index0  }});
-                cell{{ forloop.index0  }}.SetCellValue("{{field.ColumnDescription}}");
-                cell{{ forloop.index0  }}.CellStyle = headerStyle;
-                mySheet.SetColumnWidth({{ forloop.index0  }}, 10 * 256);
-    {% endfor %}
-                headerRow.Height = 30 * 20;
-                var commonCellStyle = ExcelHelper.GetCommonStyle(book);
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listModel.Count; i++)
-                {
-                    var rowTemp = mySheet.CreateRow(i + 1);
-    {% for field in ModelFields %}
-                        var rowTemp{{ forloop.index0  }} = rowTemp.CreateCell({{ forloop.index0  }});
-                            rowTemp{{ forloop.index0  }}.SetCellValue(listModel[i].{{field.DbColumnName}}.ToString());
-                            rowTemp{{ forloop.index0  }}.CellStyle = commonCellStyle;
-    {% endfor %}
-                }
-                // 导出excel
-                string webRootPath = _webHostEnvironment.WebRootPath;
-                string tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-{{ModelClassName}}导出(选择结果).xls";
-                string filePath = webRootPath + tpath;
-                DirectoryInfo di = new DirectoryInfo(filePath);
-                if (!di.Exists)
-                {
-                    di.Create();
-                }
-                FileStream fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
-
+                var rowTemp = mySheet.CreateRow(i + 1);
+{% for field in ModelFields %}
+                    var rowTemp{{ forloop.index0  }} = rowTemp.CreateCell({{ forloop.index0  }});
+                        rowTemp{{ forloop.index0  }}.SetCellValue(listModel[i].{{field.DbColumnName}}.ToString());
+                        rowTemp{{ forloop.index0  }}.CellStyle = commonCellStyle;
+{% endfor %}
             }
-            catch (Exception ex)
+            // 导出excel
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-{{ModelClassName}}导出(选择结果).xls";
+            string filePath = webRootPath + tpath;
+            DirectoryInfo di = new DirectoryInfo(filePath);
+            if (!di.Exists)
             {
-                NLogHelper.Error("选择导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                di.Create();
             }
+            FileStream fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -429,102 +371,95 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> QueryExportExcel()
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var where = PredicateBuilder.True<{{ModelClassName}}>();
+                //查询筛选
+			{% for field in ModelFields %}{% if field.DataType == 'nvarchar' %}
+			//{{field.ColumnDescription}} {{field.DataType}}
+			var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
+            if (!string.IsNullOrEmpty({{field.DbColumnName}}))
             {
-                var where = PredicateBuilder.True<{{ModelClassName}}>();
-                 //查询筛选
-			    {% for field in ModelFields %}{% if field.DataType == 'nvarchar' %}
-			    //{{field.ColumnDescription}} {{field.DataType}}
-			    var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
-                if (!string.IsNullOrEmpty({{field.DbColumnName}}))
-                {
-                    where = where.And(p => p.{{field.DbColumnName}}.Contains({{field.DbColumnName}}));
-                }{% elsif  field.DataType == 'int' %}
-			    //{{field.ColumnDescription}} {{field.DataType}}
-			    var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault().ObjectToInt(0);
-                if ({{field.DbColumnName}} > 0)
-                {
-                    where = where.And(p => p.{{field.DbColumnName}} == {{field.DbColumnName}});
-                }{% elsif  field.DataType == 'datetime' %}
-			    //{{field.ColumnDescription}} {{field.DataType}}
-			    var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
-                if (!string.IsNullOrEmpty({{field.DbColumnName}}))
-                {
-                    var dt = {{field.DbColumnName}}.ObjectToDate();
-                    where = where.And(p => p.{{field.DbColumnName}} > dt);
-                }{% elsif  field.DataType == 'bit' %}
-			    //{{field.ColumnDescription}} {{field.DataType}}
-			    var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
-                if (!string.IsNullOrEmpty({{field.DbColumnName}}) && {{field.DbColumnName}}.ToLowerInvariant() == "true")
-                {
-                    where = where.And(p => p.{{field.DbColumnName}} == true);
-                }
-                else if (!string.IsNullOrEmpty({{field.DbColumnName}}) && {{field.DbColumnName}}.ToLowerInvariant() == "false")
-                {
-                    where = where.And(p => p.{{field.DbColumnName}} == false);
-                }{% else %}
-			    //{{field.ColumnDescription}} {{field.DataType}}
-			    var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
-                if (!string.IsNullOrEmpty({{field.DbColumnName}}))
-                {
-                    where = where.And(p => p.{{field.DbColumnName}}.Contains({{field.DbColumnName}}));
-                }{% endif %}{% endfor %}
-                //获取数据
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var mySheet = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listModel = await _{{ModelClassName}}Services.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                 var headerRow = mySheet.CreateRow(0);
-                var headerStyle = ExcelHelper.GetHeaderStyle(book);
-                {% for field in ModelFields %}
-                var cell{{ forloop.index0  }} = headerRow.CreateCell({{ forloop.index0  }});
-                cell{{ forloop.index0  }}.SetCellValue("{{field.ColumnDescription}}");
-                cell{{ forloop.index0  }}.CellStyle = headerStyle;
-                mySheet.SetColumnWidth({{ forloop.index0  }}, 10 * 256);
-			    {% endfor %}
-
-                headerRow.Height = 30 * 20;
-                var commonCellStyle = ExcelHelper.GetCommonStyle(book);
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listModel.Count; i++)
-                {
-                    var rowTemp = mySheet.CreateRow(i + 1);
-    {% for field in ModelFields %}
-
-                var rowTemp{{ forloop.index0  }} = rowTemp.CreateCell({{ forloop.index0  }});
-                rowTemp{{ forloop.index0  }}.SetCellValue(listModel[i].{{field.DbColumnName}}.ToString());
-                rowTemp{{ forloop.index0  }}.CellStyle = commonCellStyle;
-
-    {% endfor %}
-                }
-                // 写入到excel
-                string webRootPath = _webHostEnvironment.WebRootPath;
-                string tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-{{ModelClassName}}导出(查询结果).xls";
-                string filePath = webRootPath + tpath;
-                DirectoryInfo di = new DirectoryInfo(filePath);
-                if (!di.Exists)
-                {
-                    di.Create();
-                }
-                FileStream fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
-            }
-            catch (Exception ex)
+                where = where.And(p => p.{{field.DbColumnName}}.Contains({{field.DbColumnName}}));
+            }{% elsif  field.DataType == 'int' %}
+			//{{field.ColumnDescription}} {{field.DataType}}
+			var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault().ObjectToInt(0);
+            if ({{field.DbColumnName}} > 0)
             {
-                NLogHelper.Error("查询导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                where = where.And(p => p.{{field.DbColumnName}} == {{field.DbColumnName}});
+            }{% elsif  field.DataType == 'datetime' %}
+			//{{field.ColumnDescription}} {{field.DataType}}
+			var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
+            if (!string.IsNullOrEmpty({{field.DbColumnName}}))
+            {
+                var dt = {{field.DbColumnName}}.ObjectToDate();
+                where = where.And(p => p.{{field.DbColumnName}} > dt);
+            }{% elsif  field.DataType == 'bit' %}
+			//{{field.ColumnDescription}} {{field.DataType}}
+			var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
+            if (!string.IsNullOrEmpty({{field.DbColumnName}}) && {{field.DbColumnName}}.ToLowerInvariant() == "true")
+            {
+                where = where.And(p => p.{{field.DbColumnName}} == true);
             }
+            else if (!string.IsNullOrEmpty({{field.DbColumnName}}) && {{field.DbColumnName}}.ToLowerInvariant() == "false")
+            {
+                where = where.And(p => p.{{field.DbColumnName}} == false);
+            }{% else %}
+			//{{field.ColumnDescription}} {{field.DataType}}
+			var {{field.DbColumnName}} = Request.Form["{{field.DbColumnName}}"].FirstOrDefault();
+            if (!string.IsNullOrEmpty({{field.DbColumnName}}))
+            {
+                where = where.And(p => p.{{field.DbColumnName}}.Contains({{field.DbColumnName}}));
+            }{% endif %}{% endfor %}
+            //获取数据
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var mySheet = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listModel = await _{{ModelClassName}}Services.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+                var headerRow = mySheet.CreateRow(0);
+            var headerStyle = ExcelHelper.GetHeaderStyle(book);
+            {% for field in ModelFields %}
+            var cell{{ forloop.index0  }} = headerRow.CreateCell({{ forloop.index0  }});
+            cell{{ forloop.index0  }}.SetCellValue("{{field.ColumnDescription}}");
+            cell{{ forloop.index0  }}.CellStyle = headerStyle;
+            mySheet.SetColumnWidth({{ forloop.index0  }}, 10 * 256);
+			{% endfor %}
+
+            headerRow.Height = 30 * 20;
+            var commonCellStyle = ExcelHelper.GetCommonStyle(book);
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listModel.Count; i++)
+            {
+                var rowTemp = mySheet.CreateRow(i + 1);
+{% for field in ModelFields %}
+
+            var rowTemp{{ forloop.index0  }} = rowTemp.CreateCell({{ forloop.index0  }});
+            rowTemp{{ forloop.index0  }}.SetCellValue(listModel[i].{{field.DbColumnName}}.ToString());
+            rowTemp{{ forloop.index0  }}.CellStyle = commonCellStyle;
+
+{% endfor %}
+            }
+            // 写入到excel
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            string fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-{{ModelClassName}}导出(查询结果).xls";
+            string filePath = webRootPath + tpath;
+            DirectoryInfo di = new DirectoryInfo(filePath);
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+            FileStream fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -542,24 +477,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoSet{{field.DbColumnName}}([FromBody]FMUpdateBoolDataByIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                oldModel.{{field.DbColumnName}} = (bool)entity.data;
 
-                jm = await _{{ModelClassName}}Services.UpdateAsync(oldModel);
-            }
-            catch (Exception ex)
+            var oldModel = await _{{ModelClassName}}Services.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("设置{{field.ColumnDescription}}", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+            oldModel.{{field.DbColumnName}} = (bool)entity.data;
+
+            jm = await _{{ModelClassName}}Services.UpdateAsync(oldModel);
+
             return new JsonResult(jm);
 		}
         #endregion

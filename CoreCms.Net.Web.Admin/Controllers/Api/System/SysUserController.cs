@@ -194,7 +194,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
                 if (ids.Any())
                 {
                     jm.otherData = ids;
-                    where = where.And(p => ids.Contains((int) p.organizationId));
+                    where = where.And(p => ids.Contains((int)p.organizationId));
                 }
             }
 
@@ -283,7 +283,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -304,8 +304,8 @@ namespace CoreCms.Net.Web.Admin.Controllers
             var userSexTypes = EnumHelper.EnumToList<GlobalEnumVars.UserSexTypes>();
             var roles = await _sysRoleServices.QueryListByClauseAsync(p => p.deleted == false);
 
-            var jm = new AdminUiCallBack {code = 0};
-            jm.data = new {userSexTypes, roles};
+            var jm = new AdminUiCallBack { code = 0 };
+            jm.data = new { userSexTypes, roles };
 
 
             return new JsonResult(jm);
@@ -326,47 +326,39 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysUser entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var haveName = await _sysUserServices.ExistsAsync(p => p.userName == entity.userName);
-                if (haveName)
-                {
-                    jm.msg = "账号已经存在";
-                    return new JsonResult(jm);
-                }
 
-                entity.createTime = DateTime.Now;
-                entity.passWord = CommonHelper.Md5For32(entity.passWord);
-                var id = await _sysUserServices.InsertAsync(entity);
-                if (id > 0 && !string.IsNullOrEmpty(entity.roleIds))
-                {
-                    var strIds = entity.roleIds.Split(",");
-                    var ids = CommonHelper.StringArrAyToIntArray(strIds);
-                    if (ids.Any())
-                    {
-                        var userRoles = new List<SysUserRole>();
-                        foreach (var itemRoleId in ids)
-                            userRoles.Add(new SysUserRole
-                            {
-                                createTime = DateTime.Now,
-                                roleId = itemRoleId,
-                                userId = id
-                            });
-                        if (userRoles.Any()) await _sysUserRoleServices.InsertAsync(userRoles);
-                    }
-                }
-
-                jm.otherData = entity;
-                var bl = id > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-            }
-            catch (Exception ex)
+            var haveName = await _sysUserServices.ExistsAsync(p => p.userName == entity.userName);
+            if (haveName)
             {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "账号已经存在";
+                return new JsonResult(jm);
             }
+
+            entity.createTime = DateTime.Now;
+            entity.passWord = CommonHelper.Md5For32(entity.passWord);
+            var id = await _sysUserServices.InsertAsync(entity);
+            if (id > 0 && !string.IsNullOrEmpty(entity.roleIds))
+            {
+                var strIds = entity.roleIds.Split(",");
+                var ids = CommonHelper.StringArrAyToIntArray(strIds);
+                if (ids.Any())
+                {
+                    var userRoles = new List<SysUserRole>();
+                    foreach (var itemRoleId in ids)
+                        userRoles.Add(new SysUserRole
+                        {
+                            createTime = DateTime.Now,
+                            roleId = itemRoleId,
+                            userId = id
+                        });
+                    if (userRoles.Any()) await _sysUserRoleServices.InsertAsync(userRoles);
+                }
+            }
+
+            jm.otherData = entity;
+            var bl = id > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
 
             return new JsonResult(jm);
         }
@@ -386,36 +378,28 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _sysUserServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _sysUserServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-
-                var userSexTypes = EnumHelper.EnumToList<GlobalEnumVars.UserSexTypes>();
-                var userRoles = await _sysUserRoleServices.QueryListByClauseAsync(p => p.userId == model.id);
-                var roleIds = userRoles.Select(p => p.roleId).ToList();
-                var roles = await _sysRoleServices.QueryListByClauseAsync(p => p.deleted == false);
-
-
-                jm.code = 0;
-                jm.data = new
-                {
-                    model,
-                    userSexTypes,
-                    roles,
-                    roleIds
-                };
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
-            catch (Exception ex)
+
+            var userSexTypes = EnumHelper.EnumToList<GlobalEnumVars.UserSexTypes>();
+            var userRoles = await _sysUserRoleServices.QueryListByClauseAsync(p => p.userId == model.id);
+            var roleIds = userRoles.Select(p => p.roleId).ToList();
+            var roles = await _sysRoleServices.QueryListByClauseAsync(p => p.deleted == false);
+
+
+            jm.code = 0;
+            jm.data = new
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+                model,
+                userSexTypes,
+                roles,
+                roleIds
+            };
 
             return new JsonResult(jm);
         }
@@ -435,87 +419,65 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysUser entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var oldModel = await _sysUserServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                var oldModel = await _sysUserServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
+            }
+
+
+            if (oldModel.userName != entity.userName)
+            {
+                var haveName = await _sysUserServices.ExistsAsync(p => p.userName == entity.userName);
+                if (haveName)
                 {
-                    jm.msg = "不存在此信息";
+                    jm.msg = "账号已经存在";
                     return new JsonResult(jm);
                 }
-
-
-                if (oldModel.userName != entity.userName)
-                {
-                    var haveName = await _sysUserServices.ExistsAsync(p => p.userName == entity.userName);
-                    if (haveName)
-                    {
-                        jm.msg = "账号已经存在";
-                        return new JsonResult(jm);
-                    }
-                }
-
-                //事物处理过程开始
-                //oldModel.id = entity.id;
-                oldModel.userName = entity.userName;
-                if (!string.IsNullOrEmpty(entity.passWord))
-                {
-                    var md5str = CommonHelper.Md5For32(entity.passWord);
-                    oldModel.passWord = md5str;
-                }
-
-                oldModel.organizationId = entity.organizationId > 0 ? entity.organizationId : 0;
-
-                oldModel.nickName = entity.nickName;
-                //oldModel.avatar = entity.avatar;
-                oldModel.sex = entity.sex;
-                oldModel.phone = entity.phone;
-                //oldModel.email = entity.email;
-                //oldModel.emailVerified = entity.emailVerified;
-                //oldModel.trueName = entity.trueName;
-                //oldModel.idCard = entity.idCard;
-                //oldModel.birthday = entity.birthday;
-                //oldModel.introduction = entity.introduction;
-                //oldModel.organizationId = entity.organizationId;
-                //oldModel.state = entity.state;
-                //oldModel.deleted = entity.deleted;
-                //oldModel.createTime = entity.createTime;
-                oldModel.updateTime = DateTime.Now;
-
-                //事物处理过程结束
-                var bl = await _sysUserServices.UpdateAsync(oldModel);
-                if (bl)
-                {
-                    await _sysUserRoleServices.DeleteAsync(p => p.userId == oldModel.id);
-                    if (!string.IsNullOrEmpty(entity.roleIds))
-                    {
-                        var strIds = entity.roleIds.Split(",");
-                        var ids = CommonHelper.StringArrAyToIntArray(strIds);
-                        if (ids.Any())
-                        {
-                            var userRoles = new List<SysUserRole>();
-                            foreach (var itemRoleId in ids)
-                                userRoles.Add(new SysUserRole
-                                {
-                                    createTime = DateTime.Now,
-                                    roleId = itemRoleId,
-                                    userId = oldModel.id
-                                });
-                            if (userRoles.Any()) await _sysUserRoleServices.InsertAsync(userRoles);
-                        }
-                    }
-                }
-
-
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
             }
-            catch (Exception ex)
+
+            //事物处理过程开始
+            oldModel.userName = entity.userName;
+            if (!string.IsNullOrEmpty(entity.passWord))
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                var md5Str = CommonHelper.Md5For32(entity.passWord);
+                oldModel.passWord = md5Str;
             }
+
+            oldModel.organizationId = entity.organizationId > 0 ? entity.organizationId : 0;
+            oldModel.nickName = entity.nickName;
+            oldModel.sex = entity.sex;
+            oldModel.phone = entity.phone;
+            oldModel.updateTime = DateTime.Now;
+
+            //事物处理过程结束
+            var bl = await _sysUserServices.UpdateAsync(oldModel);
+            if (bl)
+            {
+                await _sysUserRoleServices.DeleteAsync(p => p.userId == oldModel.id);
+                if (!string.IsNullOrEmpty(entity.roleIds))
+                {
+                    var strIds = entity.roleIds.Split(",");
+                    var ids = CommonHelper.StringArrAyToIntArray(strIds);
+                    if (ids.Any())
+                    {
+                        var userRoles = new List<SysUserRole>();
+                        foreach (var itemRoleId in ids)
+                            userRoles.Add(new SysUserRole
+                            {
+                                createTime = DateTime.Now,
+                                roleId = itemRoleId,
+                                userId = oldModel.id
+                            });
+                        if (userRoles.Any()) await _sysUserRoleServices.InsertAsync(userRoles);
+                    }
+                }
+            }
+
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
 
             return new JsonResult(jm);
         }
@@ -535,34 +497,25 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _sysUserServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _sysUserServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
-
-                if (model.id == 1)
-                {
-                    jm.msg = "初始管理员账户禁止删除";
-                    return new JsonResult(jm);
-                }
-
-                var bl = await _sysUserServices.DeleteByIdAsync(entity.id);
-                if (bl) await _sysUserRoleServices.DeleteAsync(p => p.userId == model.id);
-
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
+
+            if (model.id == 1)
             {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
+                jm.msg = "初始管理员账户禁止删除";
+                return new JsonResult(jm);
             }
 
+            var bl = await _sysUserServices.DeleteByIdAsync(entity.id);
+            if (bl) await _sysUserRoleServices.DeleteAsync(p => p.userId == model.id);
+
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
         }
 
@@ -572,36 +525,28 @@ namespace CoreCms.Net.Web.Admin.Controllers
 
         // POST: Api/SysUser/DoSetdeleted/10
         /// <summary>
-        ///     设置是否锁定
+        ///     设置是否锁定,0否,1是
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         [HttpPost]
-        [Description("设置是否锁定")]
+        [Description("设置是否锁定,0否,1是")]
         public async Task<JsonResult> DoSetState([FromBody] FMUpdateBoolDataByIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysUserServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                oldModel.state = entity.data ? 0 : 1;
-
-                var bl = await _sysUserServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _sysUserServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("设置是否删除", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            oldModel.state = entity.data ? 0 : 1;
+
+            var bl = await _sysUserServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
 
             return new JsonResult(jm);
         }

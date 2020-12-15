@@ -6,7 +6,7 @@ using CoreCms.Net.Model.Entities;
 namespace CoreCms.Net.Services
 {
     /// <summary>
-    ///     角色表 接口实现
+    /// 角色表 接口实现
     /// </summary>
     public class SysRoleServices : BaseServices<SysRole>, ISysRoleServices
     {
@@ -15,8 +15,8 @@ namespace CoreCms.Net.Services
 
         public SysRoleServices(IUnitOfWork unitOfWork, ISysRoleRepository dal)
         {
-            _dal = dal;
-            BaseDal = dal;
+            this._dal = dal;
+            base.BaseDal = dal;
             _unitOfWork = unitOfWork;
         }
     }

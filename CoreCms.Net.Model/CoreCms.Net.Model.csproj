@@ -8,8 +8,4 @@
     <PackageReference Include="sqlSugarCore" Version="5.0.0.17" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DbFiles\" />
-  </ItemGroup>
-
 </Project>
