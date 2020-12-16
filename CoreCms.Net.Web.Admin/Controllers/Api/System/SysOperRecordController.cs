@@ -226,7 +226,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -244,7 +244,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetCreate()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -263,18 +263,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysOperRecord entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _SysOperRecordServices.InsertAsync(entity) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+
+            var bl = await _SysOperRecordServices.InsertAsync(entity) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
 
             return new JsonResult(jm);
         }
@@ -294,24 +286,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -331,43 +315,35 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysOperRecord entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _SysOperRecordServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                //事物处理过程开始
-                oldModel.id = entity.id;
-                oldModel.userId = entity.userId;
-                oldModel.model = entity.model;
-                oldModel.description = entity.description;
-                oldModel.url = entity.url;
-                oldModel.requestMethod = entity.requestMethod;
-                oldModel.operMethod = entity.operMethod;
-                oldModel.param = entity.param;
-                oldModel.result = entity.result;
-                oldModel.ip = entity.ip;
-                oldModel.spendTime = entity.spendTime;
-                oldModel.state = entity.state;
-                oldModel.comments = entity.comments;
-                oldModel.createTime = entity.createTime;
-                oldModel.updateTime = entity.updateTime;
-
-                //事物处理过程结束
-                var bl = await _SysOperRecordServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _SysOperRecordServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            //事物处理过程开始
+            oldModel.userId = entity.userId;
+            oldModel.model = entity.model;
+            oldModel.description = entity.description;
+            oldModel.url = entity.url;
+            oldModel.requestMethod = entity.requestMethod;
+            oldModel.operMethod = entity.operMethod;
+            oldModel.param = entity.param;
+            oldModel.result = entity.result;
+            oldModel.ip = entity.ip;
+            oldModel.spendTime = entity.spendTime;
+            oldModel.state = entity.state;
+            oldModel.comments = entity.comments;
+            oldModel.createTime = entity.createTime;
+            oldModel.updateTime = entity.updateTime;
+
+            //事物处理过程结束
+            var bl = await _SysOperRecordServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+
 
             return new JsonResult(jm);
         }
@@ -387,27 +363,19 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
 
-                var bl = await _SysOperRecordServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
+            if (model == null)
+            {
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
 
+            var bl = await _SysOperRecordServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
+
         }
 
         #endregion
@@ -425,18 +393,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoBatchDelete([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _SysOperRecordServices.DeleteByIdsAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("批量删除", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+
+            var bl = await _SysOperRecordServices.DeleteByIdsAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
 
             return new JsonResult(jm);
         }
@@ -456,24 +416,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetDetails([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _SysOperRecordServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("预览数据", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
+
 
             return new JsonResult(jm);
         }
@@ -493,75 +446,68 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> SelectExportExcel([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _SysOperRecordServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
+                p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("用户id");
+            row1.CreateCell(2).SetCellValue("操作模块");
+            row1.CreateCell(3).SetCellValue("操作方法");
+            row1.CreateCell(4).SetCellValue("请求地址");
+            row1.CreateCell(5).SetCellValue("请求方式");
+            row1.CreateCell(6).SetCellValue("调用方法");
+            row1.CreateCell(7).SetCellValue("请求参数");
+            row1.CreateCell(8).SetCellValue("返回结果");
+            row1.CreateCell(9).SetCellValue("ip地址");
+            row1.CreateCell(10).SetCellValue("请求耗时,单位毫秒");
+            row1.CreateCell(11).SetCellValue("状态,0成功,1异常");
+            row1.CreateCell(12).SetCellValue("备注");
+            row1.CreateCell(13).SetCellValue("登录时间");
+            row1.CreateCell(14).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
             {
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _SysOperRecordServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
-                    p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("用户id");
-                row1.CreateCell(2).SetCellValue("操作模块");
-                row1.CreateCell(3).SetCellValue("操作方法");
-                row1.CreateCell(4).SetCellValue("请求地址");
-                row1.CreateCell(5).SetCellValue("请求方式");
-                row1.CreateCell(6).SetCellValue("调用方法");
-                row1.CreateCell(7).SetCellValue("请求参数");
-                row1.CreateCell(8).SetCellValue("返回结果");
-                row1.CreateCell(9).SetCellValue("ip地址");
-                row1.CreateCell(10).SetCellValue("请求耗时,单位毫秒");
-                row1.CreateCell(11).SetCellValue("状态,0成功,1异常");
-                row1.CreateCell(12).SetCellValue("备注");
-                row1.CreateCell(13).SetCellValue("登录时间");
-                row1.CreateCell(14).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].userId.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].model);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].description);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].url);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].requestMethod);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].operMethod);
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].param);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].result);
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].ip);
-                    rowtemp.CreateCell(10).SetCellValue(listmodel[i].spendTime.ToString());
-                    rowtemp.CreateCell(11).SetCellValue(listmodel[i].state.ToString());
-                    rowtemp.CreateCell(12).SetCellValue(listmodel[i].comments);
-                    rowtemp.CreateCell(13).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(14).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 导出excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysOperRecord导出(选择结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].userId.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].model);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].description);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].url);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].requestMethod);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].operMethod);
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].param);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].result);
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].ip);
+                rowtemp.CreateCell(10).SetCellValue(listmodel[i].spendTime.ToString());
+                rowtemp.CreateCell(11).SetCellValue(listmodel[i].state.ToString());
+                rowtemp.CreateCell(12).SetCellValue(listmodel[i].comments);
+                rowtemp.CreateCell(13).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(14).SetCellValue(listmodel[i].updateTime.ToString());
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("选择导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
-            }
+
+            // 导出excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysOperRecord导出(选择结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
 
             return new JsonResult(jm);
         }
@@ -580,134 +526,126 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> QueryExportExcel()
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var where = PredicateBuilder.True<SysOperRecord>();
+            //查询筛选
+
+            //主键 int
+            var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
+            if (id > 0) @where = @where.And(p => p.id == id);
+            //用户id int
+            var userId = Request.Form["userId"].FirstOrDefault().ObjectToInt(0);
+            if (userId > 0) @where = @where.And(p => p.userId == userId);
+            //操作模块 nvarchar
+            var model = Request.Form["model"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(model)) @where = @where.And(p => p.model.Contains(model));
+            //操作方法 nvarchar
+            var description = Request.Form["description"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(description)) @where = @where.And(p => p.description.Contains(description));
+            //请求地址 nvarchar
+            var url = Request.Form["url"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(url)) @where = @where.And(p => p.url.Contains(url));
+            //请求方式 nvarchar
+            var requestMethod = Request.Form["requestMethod"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(requestMethod))
+                @where = @where.And(p => p.requestMethod.Contains(requestMethod));
+            //调用方法 nvarchar
+            var operMethod = Request.Form["operMethod"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(operMethod)) @where = @where.And(p => p.operMethod.Contains(operMethod));
+            //请求参数 nvarchar
+            var param = Request.Form["param"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(param)) @where = @where.And(p => p.param.Contains(param));
+            //返回结果 nvarchar
+            var result = Request.Form["result"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(result)) @where = @where.And(p => p.result.Contains(result));
+            //ip地址 nvarchar
+            var ip = Request.Form["ip"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(ip)) @where = @where.And(p => p.ip.Contains(ip));
+            //请求耗时,单位毫秒 int
+            var spendTime = Request.Form["spendTime"].FirstOrDefault().ObjectToInt(0);
+            if (spendTime > 0) @where = @where.And(p => p.spendTime == spendTime);
+            //状态,0成功,1异常 int
+            var state = Request.Form["state"].FirstOrDefault().ObjectToInt(0);
+            if (state > 0) @where = @where.And(p => p.state == state);
+            //备注 nvarchar
+            var comments = Request.Form["comments"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(comments)) @where = @where.And(p => p.comments.Contains(comments));
+            //登录时间 datetime
+            var createTime = Request.Form["createTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(createTime))
             {
-                var where = PredicateBuilder.True<SysOperRecord>();
-                //查询筛选
-
-                //主键 int
-                var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
-                if (id > 0) @where = @where.And(p => p.id == id);
-                //用户id int
-                var userId = Request.Form["userId"].FirstOrDefault().ObjectToInt(0);
-                if (userId > 0) @where = @where.And(p => p.userId == userId);
-                //操作模块 nvarchar
-                var model = Request.Form["model"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(model)) @where = @where.And(p => p.model.Contains(model));
-                //操作方法 nvarchar
-                var description = Request.Form["description"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(description)) @where = @where.And(p => p.description.Contains(description));
-                //请求地址 nvarchar
-                var url = Request.Form["url"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(url)) @where = @where.And(p => p.url.Contains(url));
-                //请求方式 nvarchar
-                var requestMethod = Request.Form["requestMethod"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(requestMethod))
-                    @where = @where.And(p => p.requestMethod.Contains(requestMethod));
-                //调用方法 nvarchar
-                var operMethod = Request.Form["operMethod"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(operMethod)) @where = @where.And(p => p.operMethod.Contains(operMethod));
-                //请求参数 nvarchar
-                var param = Request.Form["param"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(param)) @where = @where.And(p => p.param.Contains(param));
-                //返回结果 nvarchar
-                var result = Request.Form["result"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(result)) @where = @where.And(p => p.result.Contains(result));
-                //ip地址 nvarchar
-                var ip = Request.Form["ip"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(ip)) @where = @where.And(p => p.ip.Contains(ip));
-                //请求耗时,单位毫秒 int
-                var spendTime = Request.Form["spendTime"].FirstOrDefault().ObjectToInt(0);
-                if (spendTime > 0) @where = @where.And(p => p.spendTime == spendTime);
-                //状态,0成功,1异常 int
-                var state = Request.Form["state"].FirstOrDefault().ObjectToInt(0);
-                if (state > 0) @where = @where.And(p => p.state == state);
-                //备注 nvarchar
-                var comments = Request.Form["comments"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(comments)) @where = @where.And(p => p.comments.Contains(comments));
-                //登录时间 datetime
-                var createTime = Request.Form["createTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(createTime))
-                {
-                    var dt = createTime.ObjectToDate();
-                    where = where.And(p => p.createTime > dt);
-                }
-
-                //修改时间 datetime
-                var updateTime = Request.Form["updateTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(updateTime))
-                {
-                    var dt = updateTime.ObjectToDate();
-                    where = where.And(p => p.updateTime > dt);
-                }
-
-                //获取数据
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _SysOperRecordServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("用户id");
-                row1.CreateCell(2).SetCellValue("操作模块");
-                row1.CreateCell(3).SetCellValue("操作方法");
-                row1.CreateCell(4).SetCellValue("请求地址");
-                row1.CreateCell(5).SetCellValue("请求方式");
-                row1.CreateCell(6).SetCellValue("调用方法");
-                row1.CreateCell(7).SetCellValue("请求参数");
-                row1.CreateCell(8).SetCellValue("返回结果");
-                row1.CreateCell(9).SetCellValue("ip地址");
-                row1.CreateCell(10).SetCellValue("请求耗时,单位毫秒");
-                row1.CreateCell(11).SetCellValue("状态,0成功,1异常");
-                row1.CreateCell(12).SetCellValue("备注");
-                row1.CreateCell(13).SetCellValue("登录时间");
-                row1.CreateCell(14).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].userId.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].model);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].description);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].url);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].requestMethod);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].operMethod);
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].param);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].result);
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].ip);
-                    rowtemp.CreateCell(10).SetCellValue(listmodel[i].spendTime.ToString());
-                    rowtemp.CreateCell(11).SetCellValue(listmodel[i].state.ToString());
-                    rowtemp.CreateCell(12).SetCellValue(listmodel[i].comments);
-                    rowtemp.CreateCell(13).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(14).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 写入到excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysOperRecord导出(查询结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var dt = createTime.ObjectToDate();
+                where = where.And(p => p.createTime > dt);
             }
-            catch (Exception ex)
+
+            //修改时间 datetime
+            var updateTime = Request.Form["updateTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(updateTime))
             {
-                NLogHelper.Error("查询导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                var dt = updateTime.ObjectToDate();
+                where = where.And(p => p.updateTime > dt);
             }
+
+            //获取数据
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _SysOperRecordServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("用户id");
+            row1.CreateCell(2).SetCellValue("操作模块");
+            row1.CreateCell(3).SetCellValue("操作方法");
+            row1.CreateCell(4).SetCellValue("请求地址");
+            row1.CreateCell(5).SetCellValue("请求方式");
+            row1.CreateCell(6).SetCellValue("调用方法");
+            row1.CreateCell(7).SetCellValue("请求参数");
+            row1.CreateCell(8).SetCellValue("返回结果");
+            row1.CreateCell(9).SetCellValue("ip地址");
+            row1.CreateCell(10).SetCellValue("请求耗时,单位毫秒");
+            row1.CreateCell(11).SetCellValue("状态,0成功,1异常");
+            row1.CreateCell(12).SetCellValue("备注");
+            row1.CreateCell(13).SetCellValue("登录时间");
+            row1.CreateCell(14).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
+            {
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].userId.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].model);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].description);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].url);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].requestMethod);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].operMethod);
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].param);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].result);
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].ip);
+                rowtemp.CreateCell(10).SetCellValue(listmodel[i].spendTime.ToString());
+                rowtemp.CreateCell(11).SetCellValue(listmodel[i].state.ToString());
+                rowtemp.CreateCell(12).SetCellValue(listmodel[i].comments);
+                rowtemp.CreateCell(13).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(14).SetCellValue(listmodel[i].updateTime.ToString());
+            }
+
+            // 写入到excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysOperRecord导出(查询结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
 
             return new JsonResult(jm);
         }

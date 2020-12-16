@@ -197,7 +197,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
 
             var logType = EnumHelper.EnumToList<GlobalEnumVars.LoginRecordType>();
             jm.data = new
@@ -223,24 +223,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetDetails([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysLoginRecordServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysLoginRecordServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("预览数据", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -260,65 +252,57 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> SelectExportExcel([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _sysLoginRecordServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
+                p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("用户账号");
+            row1.CreateCell(2).SetCellValue("操作系统");
+            row1.CreateCell(3).SetCellValue("设备名");
+            row1.CreateCell(4).SetCellValue("浏览器类型");
+            row1.CreateCell(5).SetCellValue("ip地址");
+            row1.CreateCell(6).SetCellValue("操作类型,0登录成功,1登录失败,2退出登录,3刷新token");
+            row1.CreateCell(7).SetCellValue("备注");
+            row1.CreateCell(8).SetCellValue("登录时间");
+            row1.CreateCell(9).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
             {
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _sysLoginRecordServices.QueryListByClauseAsync(p => entity.id.Contains(p.id),
-                    p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("用户账号");
-                row1.CreateCell(2).SetCellValue("操作系统");
-                row1.CreateCell(3).SetCellValue("设备名");
-                row1.CreateCell(4).SetCellValue("浏览器类型");
-                row1.CreateCell(5).SetCellValue("ip地址");
-                row1.CreateCell(6).SetCellValue("操作类型,0登录成功,1登录失败,2退出登录,3刷新token");
-                row1.CreateCell(7).SetCellValue("备注");
-                row1.CreateCell(8).SetCellValue("登录时间");
-                row1.CreateCell(9).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].username);
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].os);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].device);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].browser);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].ip);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].operType.ToString());
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].comments);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 导出excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysLoginRecord导出(选择结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].username);
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].os);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].device);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].browser);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].ip);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].operType.ToString());
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].comments);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].updateTime.ToString());
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("选择导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
-            }
+
+            // 导出excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysLoginRecord导出(选择结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
 
             return new JsonResult(jm);
         }
@@ -337,108 +321,100 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> QueryExportExcel()
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var where = PredicateBuilder.True<SysLoginRecord>();
+            //查询筛选
+
+            //主键 int
+            var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
+            if (id > 0) @where = @where.And(p => p.id == id);
+            //用户账号 nvarchar
+            var username = Request.Form["username"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(username)) @where = @where.And(p => p.username.Contains(username));
+            //操作系统 nvarchar
+            var os = Request.Form["os"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(os)) @where = @where.And(p => p.os.Contains(os));
+            //设备名 nvarchar
+            var device = Request.Form["device"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(device)) @where = @where.And(p => p.device.Contains(device));
+            //浏览器类型 nvarchar
+            var browser = Request.Form["browser"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(browser)) @where = @where.And(p => p.browser.Contains(browser));
+            //ip地址 nvarchar
+            var ip = Request.Form["ip"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(ip)) @where = @where.And(p => p.ip.Contains(ip));
+            //操作类型,0登录成功,1登录失败,2退出登录,3刷新token int
+            var operType = Request.Form["operType"].FirstOrDefault().ObjectToInt(0);
+            if (operType > 0) @where = @where.And(p => p.operType == operType);
+            //备注 nvarchar
+            var comments = Request.Form["comments"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(comments)) @where = @where.And(p => p.comments.Contains(comments));
+            //登录时间 datetime
+            var createTime = Request.Form["createTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(createTime))
             {
-                var where = PredicateBuilder.True<SysLoginRecord>();
-                //查询筛选
-
-                //主键 int
-                var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
-                if (id > 0) @where = @where.And(p => p.id == id);
-                //用户账号 nvarchar
-                var username = Request.Form["username"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(username)) @where = @where.And(p => p.username.Contains(username));
-                //操作系统 nvarchar
-                var os = Request.Form["os"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(os)) @where = @where.And(p => p.os.Contains(os));
-                //设备名 nvarchar
-                var device = Request.Form["device"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(device)) @where = @where.And(p => p.device.Contains(device));
-                //浏览器类型 nvarchar
-                var browser = Request.Form["browser"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(browser)) @where = @where.And(p => p.browser.Contains(browser));
-                //ip地址 nvarchar
-                var ip = Request.Form["ip"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(ip)) @where = @where.And(p => p.ip.Contains(ip));
-                //操作类型,0登录成功,1登录失败,2退出登录,3刷新token int
-                var operType = Request.Form["operType"].FirstOrDefault().ObjectToInt(0);
-                if (operType > 0) @where = @where.And(p => p.operType == operType);
-                //备注 nvarchar
-                var comments = Request.Form["comments"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(comments)) @where = @where.And(p => p.comments.Contains(comments));
-                //登录时间 datetime
-                var createTime = Request.Form["createTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(createTime))
-                {
-                    var dt = createTime.ObjectToDate();
-                    where = where.And(p => p.createTime > dt);
-                }
-
-                //修改时间 datetime
-                var updateTime = Request.Form["updateTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(updateTime))
-                {
-                    var dt = updateTime.ObjectToDate();
-                    where = where.And(p => p.updateTime > dt);
-                }
-
-                //获取数据
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _sysLoginRecordServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("用户账号");
-                row1.CreateCell(2).SetCellValue("操作系统");
-                row1.CreateCell(3).SetCellValue("设备名");
-                row1.CreateCell(4).SetCellValue("浏览器类型");
-                row1.CreateCell(5).SetCellValue("ip地址");
-                row1.CreateCell(6).SetCellValue("操作类型,0登录成功,1登录失败,2退出登录,3刷新token");
-                row1.CreateCell(7).SetCellValue("备注");
-                row1.CreateCell(8).SetCellValue("登录时间");
-                row1.CreateCell(9).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].username);
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].os);
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].device);
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].browser);
-                    rowtemp.CreateCell(5).SetCellValue(listmodel[i].ip);
-                    rowtemp.CreateCell(6).SetCellValue(listmodel[i].operType.ToString());
-                    rowtemp.CreateCell(7).SetCellValue(listmodel[i].comments);
-                    rowtemp.CreateCell(8).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(9).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 写入到excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysLoginRecord导出(查询结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var dt = createTime.ObjectToDate();
+                where = where.And(p => p.createTime > dt);
             }
-            catch (Exception ex)
+
+            //修改时间 datetime
+            var updateTime = Request.Form["updateTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(updateTime))
             {
-                NLogHelper.Error("查询导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                var dt = updateTime.ObjectToDate();
+                where = where.And(p => p.updateTime > dt);
             }
+
+            //获取数据
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _sysLoginRecordServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("用户账号");
+            row1.CreateCell(2).SetCellValue("操作系统");
+            row1.CreateCell(3).SetCellValue("设备名");
+            row1.CreateCell(4).SetCellValue("浏览器类型");
+            row1.CreateCell(5).SetCellValue("ip地址");
+            row1.CreateCell(6).SetCellValue("操作类型,0登录成功,1登录失败,2退出登录,3刷新token");
+            row1.CreateCell(7).SetCellValue("备注");
+            row1.CreateCell(8).SetCellValue("登录时间");
+            row1.CreateCell(9).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
+            {
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].username);
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].os);
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].device);
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].browser);
+                rowtemp.CreateCell(5).SetCellValue(listmodel[i].ip);
+                rowtemp.CreateCell(6).SetCellValue(listmodel[i].operType.ToString());
+                rowtemp.CreateCell(7).SetCellValue(listmodel[i].comments);
+                rowtemp.CreateCell(8).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(9).SetCellValue(listmodel[i].updateTime.ToString());
+            }
+
+            // 写入到excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysLoginRecord导出(查询结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
 
             return new JsonResult(jm);
         }

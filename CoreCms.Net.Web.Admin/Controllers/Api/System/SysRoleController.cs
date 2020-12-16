@@ -224,21 +224,12 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysRole entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                entity.createTime = DateTime.Now;
 
+            entity.createTime = DateTime.Now;
 
-                var bl = await _sysRoleServices.InsertAsync(entity) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            var bl = await _sysRoleServices.InsertAsync(entity) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
 
             return new JsonResult(jm);
         }
@@ -258,24 +249,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysRoleServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -295,35 +278,24 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysRole entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysRoleServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                //事物处理过程开始
-                //oldModel.id = entity.id;
-                oldModel.roleName = entity.roleName;
-                oldModel.roleCode = entity.roleCode;
-                oldModel.comments = entity.comments;
-                //oldModel.deleted = entity.deleted;
-                //oldModel.createTime = entity.createTime;
-                oldModel.updateTime = DateTime.Now;
-
-                //事物处理过程结束
-                var bl = await _sysRoleServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _sysRoleServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            //事物处理过程开始
+            oldModel.roleName = entity.roleName;
+            oldModel.roleCode = entity.roleCode;
+            oldModel.comments = entity.comments;
+            oldModel.updateTime = DateTime.Now;
+
+            //事物处理过程结束
+            var bl = await _sysRoleServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
 
             return new JsonResult(jm);
         }
@@ -343,26 +315,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
 
-                var bl = await _sysRoleServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            var model = await _sysRoleServices.QueryByIdAsync(entity.id);
+            if (model == null)
+            {
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
 
+            var bl = await _sysRoleServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
         }
 
@@ -381,18 +344,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoBatchDelete([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _sysRoleServices.DeleteByIdsAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("批量删除", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+
+            var bl = await _sysRoleServices.DeleteByIdsAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
 
             return new JsonResult(jm);
         }
@@ -412,24 +367,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetRoleSet([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysRoleServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -449,58 +396,50 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetSysMenu([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysMenuServices.QueryListByClauseAsync(p => p.deleted == false && p.hide == false,
-                    p => p.sortNumber, OrderByType.Asc);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                var roleMenus = await _sysRoleMenuServices.QueryListByClauseAsync(p => p.roleId == entity.id);
-                var list = new List<SysMenuTreeDto>();
-                if (model.Any())
-                    model.ForEach(p =>
-                    {
-                        list.Add(new SysMenuTreeDto
-                        {
-                            authority = p.authority,
-                            @checked = roleMenus.Exists(m => m.menuId == p.id),
-                            children = null,
-                            component = p.component,
-                            createTime = p.createTime,
-                            deleted = p.deleted,
-                            hide = p.hide,
-                            iconColor = p.iconColor,
-                            menuName = p.menuName,
-                            menuIcon = p.menuIcon,
-                            menuType = p.menuType,
-                            id = p.id,
-                            open = true,
-                            parentId = p.parentId,
-                            parentName = "",
-                            path = p.path,
-                            sortNumber = p.sortNumber,
-                            target = p.target,
-                            updateTime = p.updateTime
-                        });
-                    });
-                jm.code = 0;
-                jm.data = list;
-                jm.otherData = new
-                {
-                    entity,
-                    roleMenus
-                };
-            }
-            catch (Exception ex)
+            var model = await _sysMenuServices.QueryListByClauseAsync(p => p.deleted == false && p.hide == false,
+                p => p.sortNumber, OrderByType.Asc);
+            if (model == null)
             {
-                NLogHelper.Error("获取菜单", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            var roleMenus = await _sysRoleMenuServices.QueryListByClauseAsync(p => p.roleId == entity.id);
+            var list = new List<SysMenuTreeDto>();
+            if (model.Any())
+                model.ForEach(p =>
+                {
+                    list.Add(new SysMenuTreeDto
+                    {
+                        authority = p.authority,
+                        @checked = roleMenus.Exists(m => m.menuId == p.id),
+                        children = null,
+                        component = p.component,
+                        createTime = p.createTime,
+                        deleted = p.deleted,
+                        hide = p.hide,
+                        iconColor = p.iconColor,
+                        menuName = p.menuName,
+                        menuIcon = p.menuIcon,
+                        menuType = p.menuType,
+                        id = p.id,
+                        open = true,
+                        parentId = p.parentId,
+                        parentName = "",
+                        path = p.path,
+                        sortNumber = p.sortNumber,
+                        target = p.target,
+                        updateTime = p.updateTime
+                    });
+                });
+            jm.code = 0;
+            jm.data = list;
+            jm.otherData = new
+            {
+                entity,
+                roleMenus
+            };
 
             return new JsonResult(jm);
         }
@@ -520,40 +459,32 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoSetSysMenu([FromBody] FMIntIdByListIntData entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysRoleServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                await _sysRoleMenuServices.DeleteAsync(p => p.roleId == oldModel.id);
-                if (entity.data.Any())
+            var oldModel = await _sysRoleServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
+            {
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
+            }
+
+            await _sysRoleMenuServices.DeleteAsync(p => p.roleId == oldModel.id);
+            if (entity.data.Any())
+            {
+                var list = new List<SysRoleMenu>();
+                entity.data.ForEach(p =>
                 {
-                    var list = new List<SysRoleMenu>();
-                    entity.data.ForEach(p =>
+                    list.Add(new SysRoleMenu
                     {
-                        list.Add(new SysRoleMenu
-                        {
-                            createTime = DateTime.Now,
-                            menuId = p,
-                            roleId = oldModel.id
-                        });
+                        createTime = DateTime.Now,
+                        menuId = p,
+                        roleId = oldModel.id
                     });
-                    await _sysRoleMenuServices.InsertAsync(list);
-                }
+                });
+                await _sysRoleMenuServices.InsertAsync(list);
+            }
 
-                jm.code = 0;
-                jm.msg = "权限设置成功";
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("获取菜单", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            jm.code = 0;
+            jm.msg = "权限设置成功";
 
             return new JsonResult(jm);
         }

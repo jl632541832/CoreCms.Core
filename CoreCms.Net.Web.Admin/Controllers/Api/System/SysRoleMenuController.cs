@@ -166,7 +166,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -184,7 +184,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetCreate()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -203,18 +203,11 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysRoleMenu entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _sysRoleMenuServices.InsertAsync(entity) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+
+            var bl = await _sysRoleMenuServices.InsertAsync(entity) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
+
 
             return new JsonResult(jm);
         }
@@ -234,24 +227,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
+
 
             return new JsonResult(jm);
         }
@@ -271,33 +257,25 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysRoleMenu entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                //事物处理过程开始
-                oldModel.id = entity.id;
-                oldModel.roleId = entity.roleId;
-                oldModel.menuId = entity.menuId;
-                oldModel.createTime = entity.createTime;
-                oldModel.updateTime = entity.updateTime;
-
-                //事物处理过程结束
-                var bl = await _sysRoleMenuServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            //事物处理过程开始
+            oldModel.id = entity.id;
+            oldModel.roleId = entity.roleId;
+            oldModel.menuId = entity.menuId;
+            oldModel.createTime = entity.createTime;
+            oldModel.updateTime = entity.updateTime;
+
+            //事物处理过程结束
+            var bl = await _sysRoleMenuServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
 
             return new JsonResult(jm);
         }
@@ -317,26 +295,17 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
 
-                var bl = await _sysRoleMenuServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
+            if (model == null)
+            {
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
 
+            var bl = await _sysRoleMenuServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
         }
 
@@ -355,18 +324,10 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoBatchDelete([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _sysRoleMenuServices.DeleteByIdsAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("批量删除", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+
+            var bl = await _sysRoleMenuServices.DeleteByIdsAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
 
             return new JsonResult(jm);
         }
@@ -386,24 +347,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetDetails([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysRoleMenuServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("预览数据", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -423,56 +376,48 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> SelectExportExcel([FromBody] FMArrayIntIds entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel =
+                await _sysRoleMenuServices.QueryListByClauseAsync(p => entity.id.Contains(p.id), p => p.id,
+                    OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("角色id");
+            row1.CreateCell(2).SetCellValue("菜单id");
+            row1.CreateCell(3).SetCellValue("创建时间");
+            row1.CreateCell(4).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
             {
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel =
-                    await _sysRoleMenuServices.QueryListByClauseAsync(p => entity.id.Contains(p.id), p => p.id,
-                        OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("角色id");
-                row1.CreateCell(2).SetCellValue("菜单id");
-                row1.CreateCell(3).SetCellValue("创建时间");
-                row1.CreateCell(4).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].roleId.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].menuId.ToString());
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 导出excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysRoleMenu导出(选择结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].roleId.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].menuId.ToString());
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].updateTime.ToString());
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("选择导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
-            }
+
+            // 导出excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysRoleMenu导出(选择结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
 
             return new JsonResult(jm);
         }
@@ -491,83 +436,76 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> QueryExportExcel()
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var where = PredicateBuilder.True<SysRoleMenu>();
+            //查询筛选
+
+            //主键 int
+            var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
+            if (id > 0) @where = @where.And(p => p.id == id);
+            //角色id int
+            var roleId = Request.Form["roleId"].FirstOrDefault().ObjectToInt(0);
+            if (roleId > 0) @where = @where.And(p => p.roleId == roleId);
+            //菜单id int
+            var menuId = Request.Form["menuId"].FirstOrDefault().ObjectToInt(0);
+            if (menuId > 0) @where = @where.And(p => p.menuId == menuId);
+            //创建时间 datetime
+            var createTime = Request.Form["createTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(createTime))
             {
-                var where = PredicateBuilder.True<SysRoleMenu>();
-                //查询筛选
-
-                //主键 int
-                var id = Request.Form["id"].FirstOrDefault().ObjectToInt(0);
-                if (id > 0) @where = @where.And(p => p.id == id);
-                //角色id int
-                var roleId = Request.Form["roleId"].FirstOrDefault().ObjectToInt(0);
-                if (roleId > 0) @where = @where.And(p => p.roleId == roleId);
-                //菜单id int
-                var menuId = Request.Form["menuId"].FirstOrDefault().ObjectToInt(0);
-                if (menuId > 0) @where = @where.And(p => p.menuId == menuId);
-                //创建时间 datetime
-                var createTime = Request.Form["createTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(createTime))
-                {
-                    var dt = createTime.ObjectToDate();
-                    where = where.And(p => p.createTime > dt);
-                }
-
-                //修改时间 datetime
-                var updateTime = Request.Form["updateTime"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(updateTime))
-                {
-                    var dt = updateTime.ObjectToDate();
-                    where = where.And(p => p.updateTime > dt);
-                }
-
-                //获取数据
-                //创建Excel文件的对象
-                var book = new HSSFWorkbook();
-                //添加一个sheet
-                var sheet1 = book.CreateSheet("Sheet1");
-                //获取list数据
-                var listmodel = await _sysRoleMenuServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
-                //给sheet1添加第一行的头部标题
-                var row1 = sheet1.CreateRow(0);
-                row1.CreateCell(0).SetCellValue("主键");
-                row1.CreateCell(1).SetCellValue("角色id");
-                row1.CreateCell(2).SetCellValue("菜单id");
-                row1.CreateCell(3).SetCellValue("创建时间");
-                row1.CreateCell(4).SetCellValue("修改时间");
-
-                //将数据逐步写入sheet1各个行
-                for (var i = 0; i < listmodel.Count; i++)
-                {
-                    var rowtemp = sheet1.CreateRow(i + 1);
-                    rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
-                    rowtemp.CreateCell(1).SetCellValue(listmodel[i].roleId.ToString());
-                    rowtemp.CreateCell(2).SetCellValue(listmodel[i].menuId.ToString());
-                    rowtemp.CreateCell(3).SetCellValue(listmodel[i].createTime.ToString());
-                    rowtemp.CreateCell(4).SetCellValue(listmodel[i].updateTime.ToString());
-                }
-
-                // 写入到excel
-                var webRootPath = _webHostEnvironment.WebRootPath;
-                var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
-                var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysRoleMenu导出(查询结果).xls";
-                var filePath = webRootPath + tpath;
-                var di = new DirectoryInfo(filePath);
-                if (!di.Exists) di.Create();
-                var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
-                book.Write(fileHssf);
-                fileHssf.Close();
-
-                jm.code = 0;
-                jm.msg = GlobalConstVars.ExcelExportSuccess;
-                jm.data = tpath + fileName;
+                var dt = createTime.ObjectToDate();
+                where = where.And(p => p.createTime > dt);
             }
-            catch (Exception ex)
+
+            //修改时间 datetime
+            var updateTime = Request.Form["updateTime"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(updateTime))
             {
-                NLogHelper.Error("查询导出", ex);
-                jm.code = 1;
-                jm.msg = GlobalConstVars.ExcelExportFailure;
+                var dt = updateTime.ObjectToDate();
+                where = where.And(p => p.updateTime > dt);
             }
+
+            //获取数据
+            //创建Excel文件的对象
+            var book = new HSSFWorkbook();
+            //添加一个sheet
+            var sheet1 = book.CreateSheet("Sheet1");
+            //获取list数据
+            var listmodel = await _sysRoleMenuServices.QueryListByClauseAsync(where, p => p.id, OrderByType.Asc);
+            //给sheet1添加第一行的头部标题
+            var row1 = sheet1.CreateRow(0);
+            row1.CreateCell(0).SetCellValue("主键");
+            row1.CreateCell(1).SetCellValue("角色id");
+            row1.CreateCell(2).SetCellValue("菜单id");
+            row1.CreateCell(3).SetCellValue("创建时间");
+            row1.CreateCell(4).SetCellValue("修改时间");
+
+            //将数据逐步写入sheet1各个行
+            for (var i = 0; i < listmodel.Count; i++)
+            {
+                var rowtemp = sheet1.CreateRow(i + 1);
+                rowtemp.CreateCell(0).SetCellValue(listmodel[i].id.ToString());
+                rowtemp.CreateCell(1).SetCellValue(listmodel[i].roleId.ToString());
+                rowtemp.CreateCell(2).SetCellValue(listmodel[i].menuId.ToString());
+                rowtemp.CreateCell(3).SetCellValue(listmodel[i].createTime.ToString());
+                rowtemp.CreateCell(4).SetCellValue(listmodel[i].updateTime.ToString());
+            }
+
+            // 写入到excel
+            var webRootPath = _webHostEnvironment.WebRootPath;
+            var tpath = "/files/" + DateTime.Now.ToString("yyyy-MM-dd") + "/";
+            var fileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + "-SysRoleMenu导出(查询结果).xls";
+            var filePath = webRootPath + tpath;
+            var di = new DirectoryInfo(filePath);
+            if (!di.Exists) di.Create();
+            var fileHssf = new FileStream(filePath + fileName, FileMode.Create);
+            book.Write(fileHssf);
+            fileHssf.Close();
+
+            jm.code = 0;
+            jm.msg = GlobalConstVars.ExcelExportSuccess;
+            jm.data = tpath + fileName;
+
 
             return new JsonResult(jm);
         }
