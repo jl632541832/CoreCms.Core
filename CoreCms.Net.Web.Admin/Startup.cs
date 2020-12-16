@@ -368,14 +368,14 @@ namespace CoreCms.Net.Web.Admin
                         weixinRegister.RegisterMpAccount(senparcWeixinSetting.Value, "公众号")
                             .RegisterWxOpenAccount(senparcWeixinSetting.Value, "程序");
                     });
-            //使用 公众号 MessageHandler 中间件 
+            //使用 公众号 MessageHandler 中间件
             app.UseMessageHandlerForMp("/WeixinAsync", CustomMessageHandler.GenerateMessageHandler, options =>
             {
                 options.AccountSettingFunc = context => senparcWeixinSetting.Value;
                 //对 MessageHandler 内异步方法未提供重写时，调用同步方法（按需）
                 options.DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
             });
-            //使用 小程序 MessageHandler 中间件 
+            //使用 小程序 MessageHandler 中间件
             app.UseMessageHandlerForWxOpen("/WxOpenAsync", CustomWxOpenMessageHandler.GenerateMessageHandler, options =>
             {
                 options.DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
@@ -387,7 +387,7 @@ namespace CoreCms.Net.Web.Admin
             //app.UseHttpsRedirection();
             // 使用静态文件
             app.UseStaticFiles();
-           
+
             // 先开启认证
             app.UseAuthentication();
             // 然后是授权中间件
