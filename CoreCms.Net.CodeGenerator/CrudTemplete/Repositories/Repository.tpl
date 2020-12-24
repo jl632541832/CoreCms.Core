@@ -32,21 +32,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> InsertAsync({{ModelClassName}} entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Insertable(entity).ExecuteReturnIdentityAsync() > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
+            if (bl)
             {
-                var bl = await dbClient.Insertable(entity).ExecuteReturnIdentityAsync() > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.CreateFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 
@@ -58,31 +52,25 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> UpdateAsync({{ModelClassName}} entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var oldModel = await dbClient.Queryable<{{ModelClassName}}>().In(entity.id).SingleAsync();
+            if (oldModel == null)
             {
-                 var oldModel = await dbClient.Queryable<{{ModelClassName}}>().In(entity.id).SingleAsync();
-                 if (oldModel == null)
-                 {
-                    jm.msg = "不存在此信息";
-                    return jm;
-                 }
-                 //事物处理过程开始
-        		  {% for field in ModelFields %}oldModel.{{field.DbColumnName}} = entity.{{field.DbColumnName}};
-                {% endfor %}
-                //事物处理过程结束
-                var bl = await dbClient.Updateable(oldModel).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+            jm.msg = "不存在此信息";
+            return jm;
             }
-            catch (Exception ex)
+            //事物处理过程开始
+        	{% for field in ModelFields %}oldModel.{{field.DbColumnName}} = entity.{{field.DbColumnName}};
+            {% endfor %}
+            //事物处理过程结束
+            var bl = await dbClient.Updateable(oldModel).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+            if (bl)
             {
-                jm.msg = GlobalConstVars.EditFailure;
-                jm.data = ex.ToString();
+                await UpdateCaChe();
             }
+
             return jm;
         }
 
@@ -94,21 +82,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> UpdateAsync(List<{{ModelClassName}}> entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+            if (bl)
             {
-                var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.EditFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 
@@ -120,21 +102,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> DeleteByIdAsync(object id)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Deleteable<{{ModelClassName}}>(id).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            if (bl)
             {
-                var bl = await dbClient.Deleteable<{{ModelClassName}}>(id).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.DeleteFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 
@@ -146,21 +122,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> DeleteByIdsAsync(int[] ids)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Deleteable<{{ModelClassName}}>().In(ids).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            if (bl)
             {
-                var bl = await dbClient.Deleteable<{{ModelClassName}}>().In(ids).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.DeleteFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 

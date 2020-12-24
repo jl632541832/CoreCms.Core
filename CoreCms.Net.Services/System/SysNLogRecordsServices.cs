@@ -6,7 +6,7 @@ using CoreCms.Net.Model.Entities;
 namespace CoreCms.Net.Services
 {
     /// <summary>
-    ///     Nlog记录表 接口实现
+    /// Nlog记录表 接口实现
     /// </summary>
     public class SysNLogRecordsServices : BaseServices<SysNLogRecords>, ISysNLogRecordsServices
     {
@@ -15,10 +15,9 @@ namespace CoreCms.Net.Services
 
         public SysNLogRecordsServices(IUnitOfWork unitOfWork, ISysNLogRecordsRepository dal)
         {
-            _dal = dal;
-            BaseDal = dal;
+            this._dal = dal;
+            base.BaseDal = dal;
             _unitOfWork = unitOfWork;
         }
-
     }
 }

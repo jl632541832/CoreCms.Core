@@ -6,17 +6,17 @@
     <members>
         <member name="T:CoreCms.Net.Web.Admin.Controllers.DemoController">
             <summary>
-                演示类
+            演示类
             </summary>
         </member>
         <member name="M:CoreCms.Net.Web.Admin.Controllers.DemoController.#ctor">
             <summary>
-                构造函数
+            构造函数
             </summary>
         </member>
         <member name="M:CoreCms.Net.Web.Admin.Controllers.DemoController.Index">
             <summary>
-                默认首页
+            默认首页
             </summary>
             <returns></returns>
         </member>
@@ -131,6 +131,36 @@
         <member name="M:CoreCms.Net.Web.Admin.Controllers.ToolsController.GetSysNLogRecords">
             <summary>
                 获取全局Nlog日志
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.CodeGeneratorController">
+            <summary>
+            代码生成器
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.CodeGeneratorController.#ctor(CoreCms.Net.CodeGenerator.Services.ICodeGeneratorServices,AutoMapper.IMapper,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.CodeGeneratorController.GetTables">
+            <summary>
+            获取数据表格列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.CodeGeneratorController.CodeGenDown(System.String,System.String)">
+            <summary>
+            生成代码
+            </summary>
+            <param name="tableName"></param>
+            <param name="fileType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.CodeGeneratorController.GetDataBaseTablesToExcel">
+            <summary>
+            获取所有表和表名并生成excel
             </summary>
             <returns></returns>
         </member>
@@ -727,6 +757,69 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController">
+            <summary>
+                定时任务日志
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,CoreCms.Net.IServices.ISysTaskLogServices)">
+            <summary>
+                构造函数
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.GetPageList">
+            <summary>
+                获取列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.GetIndex">
+            <summary>
+                首页数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.DoDelete(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                单选删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.DoBatchDelete(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                批量删除
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.GetDetails(CoreCms.Net.Model.FromBody.FMIntId)">
+            <summary>
+                预览数据
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.SelectExportExcel(CoreCms.Net.Model.FromBody.FMArrayIntIds)">
+            <summary>
+                选择导出
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.QueryExportExcel">
+            <summary>
+                查询导出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.SysTaskLogController.DoSetisSuccess(CoreCms.Net.Model.FromBody.FMUpdateBoolDataByIntId)">
+            <summary>
+                设置是否完成
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
         <member name="T:CoreCms.Net.Web.Admin.Controllers.SysUserController">
             <summary>
                 用户表
@@ -785,7 +878,7 @@
         </member>
         <member name="M:CoreCms.Net.Web.Admin.Controllers.SysUserController.DoSetState(CoreCms.Net.Model.FromBody.FMUpdateBoolDataByIntId)">
             <summary>
-                设置是否锁定
+                设置是否锁定,0否,1是
             </summary>
             <param name="entity"></param>
             <returns></returns>
@@ -873,6 +966,17 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:CoreCms.Net.Web.Admin.Controllers.HomeController">
+            <summary>
+            默认
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.Admin.Controllers.HomeController.Index">
+            <summary>
+            构造函数
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:CoreCms.Net.Web.Admin.Program">
             <summary>
                 初始化
@@ -923,12 +1027,238 @@
             </summary>
             <param name="builder"></param>
         </member>
-        <member name="M:CoreCms.Net.Web.Admin.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+        <member name="M:CoreCms.Net.Web.Admin.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Options.IOptions{Senparc.CO2NET.SenparcSetting},Microsoft.Extensions.Options.IOptions{Senparc.Weixin.Entities.SenparcWeixinSetting})">
             <summary>
                 This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             </summary>
             <param name="app"></param>
             <param name="env"></param>
+        </member>
+        <member name="T:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController">
+            <summary>
+            微信小程序拉取授权示例
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController.appId">
+            <summary>
+            appid与微信公众账号后台的AppId设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController.appSecret">
+            <summary>
+            与微信公众账号后台的AppId设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController.#ctor(CoreCms.Net.IServices.ICoreCmsUserWeChatInfoServices)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="userWeChatInfoServices"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController.UserInfoCallback(System.String,System.String,System.String)">
+            <summary>
+            OAuthScope.snsapi_userinfo方式回调
+            </summary>
+            <param name="code"></param>
+            <param name="state"></param>
+            <param name="returnUrl">用户最初尝试进入的页面</param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOfficialOAuthController.BaseCallback(System.String,System.String,System.String)">
+            <summary>
+            OAuthScope.snsapi_base方式回调
+            </summary>
+            <param name="code"></param>
+            <param name="state"></param>
+            <param name="returnUrl">用户最初尝试进入的页面</param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController">
+            <summary>
+            微信小程序请求对接Controller
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.Token">
+            <summary>
+            //与微信小程序后台的Token设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.EncodingAesKey">
+            <summary>
+            //与微信小程序后台的EncodingAESKey设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.WxOpenAppId">
+            <summary>
+            //与微信小程序后台的AppId设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="F:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.WxOpenAppSecret">
+            <summary>
+            //与微信小程序账号后台的AppId设置保持一致，区分大小写。
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.#ctor(CoreCms.Net.IServices.ICoreCmsUserWeChatInfoServices)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="userWeChatInfoServices"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.Get(Senparc.Weixin.WxOpen.Entities.Request.PostModel,System.String)">
+            <summary>
+            GET请求用于处理微信小程序后台的URL验证
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.Post(Senparc.Weixin.WxOpen.Entities.Request.PostModel)">
+            <summary>
+            用户发送消息后，微信平台自动Post一个请求到这里，并等待响应XML。
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.RequestData(System.String)">
+            <summary>
+            返回数据回调测试
+            </summary>
+            <param name="nickName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.OnLogin(System.String)">
+            <summary>
+            wx.login登陆成功之后发送的请求
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.CheckWxOpenSignature(System.String,System.String,System.String)">
+            <summary>
+            校验签名
+            </summary>
+            <param name="sessionId"></param>
+            <param name="rawData"></param>
+            <param name="signature"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.DecodeEncryptedData(System.String,System.String,System.String,System.String)">
+            <summary>
+            解码数据
+            </summary>
+            <param name="type"></param>
+            <param name="sessionId"></param>
+            <param name="encryptedData"></param>
+            <param name="iv"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.TemplateTest(System.String,System.String)">
+            <summary>
+            模板测试
+            </summary>
+            <param name="sessionId"></param>
+            <param name="formId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.DecryptPhoneNumber(System.String,System.String,System.String)">
+            <summary>
+            解密电话号码
+            </summary>
+            <param name="sessionId"></param>
+            <param name="encryptedData"></param>
+            <param name="iv"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.DecryptRunData(System.String,System.String,System.String)">
+            <summary>
+            解密运动步数
+            </summary>
+            <param name="sessionId"></param>
+            <param name="encryptedData"></param>
+            <param name="iv"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.GetPrepayid(System.String)">
+            <summary>
+            支付测试
+            </summary>
+            <param name="sessionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.GetQrCode(System.String,System.String,System.String)">
+            <summary>
+            获取二维码
+            </summary>
+            <param name="sessionId"></param>
+            <param name="useBase64"></param>
+            <param name="codeType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.OAuth.WxOpenOAuthController.SubscribeMessage(System.String,System.String)">
+            <summary>
+            订阅消息
+            </summary>
+            <param name="sessionId"></param>
+            <param name="templateId"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController">
+            <summary>
+            支付宝异步通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.#ctor(Essensoft.AspNetCore.Payment.Alipay.IAlipayNotifyClient,Microsoft.Extensions.Options.IOptions{Essensoft.AspNetCore.Payment.Alipay.AlipayOptions})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="client"></param>
+            <param name="optionsAccessor"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.Gateway">
+            <summary>
+            应用网关
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.Precreate">
+            <summary>
+            扫码支付异步通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.AppPay">
+            <summary>
+            APP支付异步通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.PagePay">
+            <summary>
+            电脑网站支付异步通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.AliPayController.WapPay">
+            <summary>
+            手机网站支付异步通知
+            </summary>
+        </member>
+        <member name="T:CoreCms.Net.Web.WebApi.Controllers.PayNotify.WeChatPayController">
+            <summary>
+            微信支付异步通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.WeChatPayController.#ctor(Essensoft.AspNetCore.Payment.WeChatPay.IWeChatPayNotifyClient,Microsoft.Extensions.Options.IOptions{Essensoft.AspNetCore.Payment.WeChatPay.WeChatPayOptions})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="client"></param>
+            <param name="optionsAccessor"></param>
+            <param name="billPaymentsServices"></param>
+            <param name="billRefundServices"></param>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.WeChatPayController.Unifiedorder">
+            <summary>
+            统一下单支付结果通知
+            </summary>
+        </member>
+        <member name="M:CoreCms.Net.Web.WebApi.Controllers.PayNotify.WeChatPayController.Refund">
+            <summary>
+            退款结果通知
+            </summary>
         </member>
     </members>
 </doc>

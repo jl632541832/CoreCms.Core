@@ -13,18 +13,18 @@
 
 ### 后端技术
 #### 技术模块组成
-| 技术 | 名称 |官网 |
-| --- | --- |  --- |
-| Asp.net Core | 应用框架| [https://projects.spring.io/spring-boot/](https://projects.spring.io/spring-boot/) |
-| Asp.net Core WebApi | Api框架| [https://projects.spring.io/spring-cloud/](https://projects.spring.io/spring-boot/) |
-| Swagger2 | Api文档| [http://www.mybatis.org/mybatis-3/zh/index.html](http://www.mybatis.org/mybatis-3/zh/index.html) |
-| AutoFac | IOC框架| [https://gitee.com/free/Mapper](https://gitee.com/free/Mapper) |
-| SqlSugar | ORM框架| [http://www.mybatis.org/generator/index.html](http://www.mybatis.org/generator/index.html) |
-| AutoMapper | 实体映射| [https://swagger.io/](https://swagger.io/) |
-| DotLiquid | 模板引擎| [https://www.thymeleaf.org/](https://www.thymeleaf.org/) |
-| Nlog | 日志组件| [https://logback.qos.ch](https://logback.qos.ch/) |
-| Redis | 数据缓存| [https://github.com/alibaba/druid](https://github.com/alibaba/druid) |
-| Jwt | 授权认证| [http://hibernate.org/validator/](http://hibernate.org/validator/) |
+| 技术 | 名称 |
+| --- | --- | 
+| Asp.net Core | 应用框架| 
+| Asp.net Core WebApi | Api框架| 
+| Swagger2 | Api文档| 
+| AutoFac | IOC框架| 
+| SqlSugar | ORM框架| 
+| AutoMapper | 实体映射|
+| DotLiquid | 模板引擎|
+| Nlog | 日志组件|
+| Redis | 数据缓存|
+| Jwt | 授权认证|
 
 
 #### 组件模块说明

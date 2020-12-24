@@ -130,18 +130,11 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysOrganization entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var bl = await _sysOrganizationServices.InsertAsync(entity) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = (bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure);
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+
+            var bl = await _sysOrganizationServices.InsertAsync(entity) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = (bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure);
+
             return new JsonResult(jm);
         }
         #endregion
@@ -158,34 +151,27 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysOrganizationServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                var dict = await _sysDictionaryServices.QueryByClauseAsync(p => p.dictCode == "organization_type");
-                var dictData = new List<SysDictionaryData>();
-                if (dict != null)
-                {
-                    dictData = await _sysDictionaryDataServices.QueryListByClauseAsync(p => p.dictId == dict.id);
-                }
-                jm.code = 0;
-                jm.data = new
-                {
-                    model,
-                    dictData
-                };
-            }
-            catch (Exception ex)
+            var model = await _sysOrganizationServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            var dict = await _sysDictionaryServices.QueryByClauseAsync(p => p.dictCode == "organization_type");
+            var dictData = new List<SysDictionaryData>();
+            if (dict != null)
+            {
+                dictData = await _sysDictionaryDataServices.QueryListByClauseAsync(p => p.dictId == dict.id);
+            }
+            jm.code = 0;
+            jm.data = new
+            {
+                model,
+                dictData
+            };
+
             return new JsonResult(jm);
         }
         #endregion
@@ -202,38 +188,31 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysOrganization entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysOrganizationServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                //事物处理过程开始
-                //oldModel.id = entity.id;
-                oldModel.parentId = entity.parentId;
-                oldModel.organizationName = entity.organizationName;
-                oldModel.organizationFullName = entity.organizationFullName;
-                oldModel.organizationType = entity.organizationType;
-                //oldModel.leaderId = entity.leaderId;
-                oldModel.sortNumber = entity.sortNumber;
-                oldModel.comments = entity.comments;
-                oldModel.deleted = entity.deleted;
-                //oldModel.createTime = entity.createTime;
-                oldModel.updateTime = DateTime.Now;
 
-                //事物处理过程结束
-                var bl = await _sysOrganizationServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _sysOrganizationServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+            //事物处理过程开始
+            //oldModel.id = entity.id;
+            oldModel.parentId = entity.parentId;
+            oldModel.organizationName = entity.organizationName;
+            oldModel.organizationFullName = entity.organizationFullName;
+            oldModel.organizationType = entity.organizationType;
+            //oldModel.leaderId = entity.leaderId;
+            oldModel.sortNumber = entity.sortNumber;
+            oldModel.comments = entity.comments;
+            oldModel.deleted = entity.deleted;
+            //oldModel.createTime = entity.createTime;
+            oldModel.updateTime = DateTime.Now;
+
+            //事物处理过程结束
+            var bl = await _sysOrganizationServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+
             return new JsonResult(jm);
         }
         #endregion
@@ -250,25 +229,18 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _sysOrganizationServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _sysOrganizationServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
-                var bl = await _sysOrganizationServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
-            }
+            var bl = await _sysOrganizationServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
+
         }
         #endregion
 
@@ -287,25 +259,18 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoSetSysOrganizationLeader([FromBody] FMDoSetSysOrganizationLeaderPost entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var oldModel = await _sysOrganizationServices.QueryByIdAsync(entity.organizationId);
+            if (oldModel == null)
             {
-                var oldModel = await _sysOrganizationServices.QueryByIdAsync(entity.organizationId);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
-                oldModel.leaderId = entity.leaderId;
-                var bl = await _sysOrganizationServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.SetDataSuccess : GlobalConstVars.SetDataFailure;
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("设置leader", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            oldModel.leaderId = entity.leaderId;
+            var bl = await _sysOrganizationServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.SetDataSuccess : GlobalConstVars.SetDataFailure;
+
             return new JsonResult(jm);
         }
         #endregion

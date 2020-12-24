@@ -32,21 +32,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> InsertAsync(SysMenu entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Insertable(entity).ExecuteReturnIdentityAsync() > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
+            if (bl)
             {
-                var bl = await dbClient.Insertable(entity).ExecuteReturnIdentityAsync() > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.CreateFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 
@@ -58,46 +52,40 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> UpdateAsync(SysMenu entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await dbClient.Queryable<SysMenu>().In(entity.id).SingleAsync();
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return jm;
-                }
-                //事物处理过程开始
-                //oldModel.id = entity.id;
-                oldModel.parentId = entity.parentId;
-                oldModel.menuName = entity.menuName;
-                oldModel.menuIcon = entity.menuIcon;
-                oldModel.path = entity.path;
-                oldModel.component = entity.component;
-                oldModel.menuType = entity.menuType;
-                oldModel.sortNumber = entity.sortNumber;
-                oldModel.authority = entity.authority;
-                oldModel.target = entity.target;
-                oldModel.iconColor = entity.iconColor;
-                oldModel.hide = entity.hide;
-                //oldModel.deleted = entity.deleted;
-                //oldModel.createTime = entity.createTime;
-                oldModel.updateTime = DateTime.Now;
-                oldModel.identificationCode = entity.identificationCode;
 
-                //事物处理过程结束
-                var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
-            }
-            catch (Exception ex)
+            var oldModel = await dbClient.Queryable<SysMenu>().In(entity.id).SingleAsync();
+            if (oldModel == null)
             {
-                jm.msg = GlobalConstVars.EditFailure;
-                jm.data = ex.ToString();
+                jm.msg = "不存在此信息";
+                return jm;
             }
+            //事物处理过程开始
+            //oldModel.id = entity.id;
+            oldModel.parentId = entity.parentId;
+            oldModel.menuName = entity.menuName;
+            oldModel.menuIcon = entity.menuIcon;
+            oldModel.path = entity.path;
+            oldModel.component = entity.component;
+            oldModel.menuType = entity.menuType;
+            oldModel.sortNumber = entity.sortNumber;
+            oldModel.authority = entity.authority;
+            oldModel.target = entity.target;
+            oldModel.iconColor = entity.iconColor;
+            oldModel.hide = entity.hide;
+            //oldModel.deleted = entity.deleted;
+            //oldModel.createTime = entity.createTime;
+            oldModel.updateTime = DateTime.Now;
+            oldModel.identificationCode = entity.identificationCode;
+
+            //事物处理过程结束
+            var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+            if (bl)
+            {
+                await UpdateCaChe();
+            }
+
             return jm;
         }
 
@@ -109,21 +97,15 @@ namespace CoreCms.Net.Repository
         public new async Task<AdminUiCallBack> UpdateAsync(List<SysMenu> entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
+            if (bl)
             {
-                var bl = await dbClient.Updateable(entity).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
+                await UpdateCaChe();
             }
-            catch (Exception ex)
-            {
-                jm.msg = GlobalConstVars.EditFailure;
-                jm.data = ex.ToString();
-            }
+
             return jm;
         }
 
@@ -135,32 +117,26 @@ namespace CoreCms.Net.Repository
         public async Task<AdminUiCallBack> DeleteByIdAsync(int id)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var all = await GetCaChe();
-                var model = all.Find(p => p.id == id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return jm;
-                }
 
-                var ids = new List<int>() { id };
-                GetIds(all, id, ids);
-
-                var bl = await dbClient.Deleteable<SysMenu>().In(ids).ExecuteCommandHasChangeAsync();
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
-                if (bl)
-                {
-                    await UpdateCaChe();
-                }
-            }
-            catch (Exception ex)
+            var all = await GetCaChe();
+            var model = all.Find(p => p.id == id);
+            if (model == null)
             {
-                jm.msg = GlobalConstVars.DeleteFailure;
-                jm.data = ex.ToString();
+                jm.msg = GlobalConstVars.DataisNo;
+                return jm;
             }
+
+            var ids = new List<int>() { id };
+            GetIds(all, id, ids);
+
+            var bl = await dbClient.Deleteable<SysMenu>().In(ids).ExecuteCommandHasChangeAsync();
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+            if (bl)
+            {
+                await UpdateCaChe();
+            }
+
             return jm;
         }
 

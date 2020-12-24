@@ -188,7 +188,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetIndex()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -206,7 +206,7 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public JsonResult GetCreate()
         {
             //返回数据
-            var jm = new AdminUiCallBack {code = 0};
+            var jm = new AdminUiCallBack { code = 0 };
             return new JsonResult(jm);
         }
 
@@ -225,21 +225,12 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoCreate([FromBody] SysDictionary entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                entity.createTime = DateTime.Now;
 
+            entity.createTime = DateTime.Now;
 
-                var bl = await _sysDictionaryServices.InsertAsync(entity) > 0;
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
-            }
-            catch (Exception ex)
-            {
-                NLogHelper.Error("创建提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
-            }
+            var bl = await _sysDictionaryServices.InsertAsync(entity) > 0;
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.CreateSuccess : GlobalConstVars.CreateFailure;
 
             return new JsonResult(jm);
         }
@@ -259,24 +250,16 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> GetEdit([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var model = await _sysDictionaryServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                jm.code = 0;
-                jm.data = model;
-            }
-            catch (Exception ex)
+            var model = await _sysDictionaryServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                NLogHelper.Error("编辑", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            jm.code = 0;
+            jm.data = model;
 
             return new JsonResult(jm);
         }
@@ -296,36 +279,25 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoEdit([FromBody] SysDictionary entity)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
-                var oldModel = await _sysDictionaryServices.QueryByIdAsync(entity.id);
-                if (oldModel == null)
-                {
-                    jm.msg = "不存在此信息";
-                    return new JsonResult(jm);
-                }
 
-                //事物处理过程开始
-                //oldModel.id = entity.id;
-                oldModel.dictCode = entity.dictCode;
-                oldModel.dictName = entity.dictName;
-                oldModel.comments = entity.comments;
-                oldModel.sortNumber = entity.sortNumber;
-                //oldModel.deleted = entity.deleted;
-                //oldModel.createTime = entity.createTime;
-                oldModel.updateTime = DateTime.Now;
-
-                //事物处理过程结束
-                var bl = await _sysDictionaryServices.UpdateAsync(oldModel);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
-            }
-            catch (Exception ex)
+            var oldModel = await _sysDictionaryServices.QueryByIdAsync(entity.id);
+            if (oldModel == null)
             {
-                NLogHelper.Error("编辑提交", ex);
-                jm.code = 1;
-                jm.msg = ex.ToString();
+                jm.msg = "不存在此信息";
+                return new JsonResult(jm);
             }
+
+            //事物处理过程开始
+            oldModel.dictCode = entity.dictCode;
+            oldModel.dictName = entity.dictName;
+            oldModel.comments = entity.comments;
+            oldModel.sortNumber = entity.sortNumber;
+            oldModel.updateTime = DateTime.Now;
+
+            //事物处理过程结束
+            var bl = await _sysDictionaryServices.UpdateAsync(oldModel);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.EditSuccess : GlobalConstVars.EditFailure;
 
             return new JsonResult(jm);
         }
@@ -345,33 +317,25 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<JsonResult> DoDelete([FromBody] FMIntId entity)
         {
             var jm = new AdminUiCallBack();
-            try
+
+            var model = await _sysDictionaryServices.QueryByIdAsync(entity.id);
+            if (model == null)
             {
-                var model = await _sysDictionaryServices.QueryByIdAsync(entity.id);
-                if (model == null)
-                {
-                    jm.msg = GlobalConstVars.DataisNo;
-                    return new JsonResult(jm);
-                }
-
-                if (await _sysDictionaryDataServices.ExistsAsync(p => p.dictId == model.id))
-                {
-                    jm.msg = GlobalConstVars.DeleteIsHaveChildren;
-                    return new JsonResult(jm);
-                }
-
-                var bl = await _sysDictionaryServices.DeleteByIdAsync(entity.id);
-                jm.code = bl ? 0 : 1;
-                jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
+                jm.msg = GlobalConstVars.DataisNo;
                 return new JsonResult(jm);
             }
-            catch (Exception ex)
+
+            if (await _sysDictionaryDataServices.ExistsAsync(p => p.dictId == model.id))
             {
-                NLogHelper.Error("删除", ex);
-                jm.msg = GlobalConstVars.DataHandleEx;
+                jm.msg = GlobalConstVars.DeleteIsHaveChildren;
+                return new JsonResult(jm);
             }
 
+            var bl = await _sysDictionaryServices.DeleteByIdAsync(entity.id);
+            jm.code = bl ? 0 : 1;
+            jm.msg = bl ? GlobalConstVars.DeleteSuccess : GlobalConstVars.DeleteFailure;
             return new JsonResult(jm);
+
         }
 
         #endregion

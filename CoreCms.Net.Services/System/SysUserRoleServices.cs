@@ -6,7 +6,7 @@ using CoreCms.Net.Model.Entities;
 namespace CoreCms.Net.Services
 {
     /// <summary>
-    ///     用户角色关联表 接口实现
+    /// 用户角色关联表 接口实现
     /// </summary>
     public class SysUserRoleServices : BaseServices<SysUserRole>, ISysUserRoleServices
     {
@@ -15,8 +15,8 @@ namespace CoreCms.Net.Services
 
         public SysUserRoleServices(IUnitOfWork unitOfWork, ISysUserRoleRepository dal)
         {
-            _dal = dal;
-            BaseDal = dal;
+            this._dal = dal;
+            base.BaseDal = dal;
             _unitOfWork = unitOfWork;
         }
     }

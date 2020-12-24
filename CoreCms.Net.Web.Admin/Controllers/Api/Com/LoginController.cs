@@ -66,100 +66,91 @@ namespace CoreCms.Net.Web.Admin.Controllers
         public async Task<object> GetJwtToken([FromBody] FMLogin model)
         {
             var jm = new AdminUiCallBack();
-            try
-            {
 
-                if (string.IsNullOrEmpty(model.userName) || string.IsNullOrEmpty(model.password))
+            if (string.IsNullOrEmpty(model.userName) || string.IsNullOrEmpty(model.password))
+            {
+                jm.msg = "用户名或密码不能为空";
+                return new JsonResult(jm);
+            }
+
+            model.password = CommonHelper.Md5For32(model.password);
+
+            var user = await _sysUserServices.QueryByClauseAsync(p => p.userName == model.userName && p.passWord == model.password);
+            if (user != null)
+            {
+                if (user.state == 1)
                 {
-                    jm.msg = "用户名或密码不能为空";
+                    jm.msg = "您的账户已经被冻结,请联系管理员解锁";
                     return new JsonResult(jm);
                 }
-
-                model.password = CommonHelper.Md5For32(model.password);
-
-                var user = await _sysUserServices.QueryByClauseAsync(p => p.userName == model.userName && p.passWord == model.password);
-                if (user != null)
-                {
-                    if (user.state == 1)
-                    {
-                        jm.msg = "您的账户已经被冻结,请联系管理员解锁";
-                        return new JsonResult(jm);
-                    }
-                    var userRoles = await _sysUserServices.GetUserRoleNameStr(model.userName, model.password);
-                    //如果是基于用户的授权策略，这里要添加用户;如果是基于角色的授权策略，这里要添加角色
-                    var claims = new List<Claim> {
+                var userRoles = await _sysUserServices.GetUserRoleNameStr(model.userName, model.password);
+                //如果是基于用户的授权策略，这里要添加用户;如果是基于角色的授权策略，这里要添加角色
+                var claims = new List<Claim> {
                         new Claim(ClaimTypes.Name, user.userName),
                         new Claim(JwtRegisteredClaimNames.Jti, user.id.ToString()),
                         new Claim(ClaimTypes.Expiration, DateTime.Now.AddSeconds(_permissionRequirement.Expiration.TotalSeconds).ToString()) };
-                    claims.AddRange(userRoles.Split(',').Select(s => new Claim(ClaimTypes.Role, s)));
+                claims.AddRange(userRoles.Split(',').Select(s => new Claim(ClaimTypes.Role, s)));
 
-                    // ids4和jwt切换
-                    // jwt
-                    if (!Permissions.IsUseIds4)
-                    {
-                        var data = await _sysRoleMenuServices.RoleModuleMaps();
-                        var list = (from item in data
-                                    orderby item.id
-                                    select new PermissionItem
-                                    {
-                                        Url = item.menu?.component,
-                                        RouteUrl = item.menu?.path,
-                                        Authority = item.menu?.authority,
-                                        Role = item.role?.roleCode,
-                                    }).ToList();
-
-                        _permissionRequirement.Permissions = list;
-                    }
-
-                    //用户标识
-                    var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
-                    identity.AddClaims(claims);
-
-                    var token = JwtToken.BuildJwtToken(claims.ToArray(), _permissionRequirement);
-
-                    jm.code = 0;
-                    jm.msg = "认证成功";
-                    jm.data = new
-                    {
-                        token,
-                        loginUrl = "Panel.html"
-                    };
-
-                    //插入登录日志
-                    var log = new SysLoginRecord();
-                    log.username = model.userName;
-                    log.ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    log.os = RuntimeInformation.OSDescription;
-                    log.browser = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.UserAgent];
-                    log.operType = (int)GlobalEnumVars.LoginRecordType.登录成功;
-                    log.createTime = DateTime.Now;
-                    await _sysLoginRecordRepository.InsertAsync(log);
-
-                    return new JsonResult(jm);
-                }
-                else
+                // ids4和jwt切换
+                // jwt
+                if (!Permissions.IsUseIds4)
                 {
-                    //插入登录日志
-                    var log = new SysLoginRecord();
-                    log.username = model.userName;
-                    log.ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    log.os = RuntimeInformation.OSDescription;
-                    log.browser = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.UserAgent];
-                    log.operType = (int)GlobalEnumVars.LoginRecordType.登录失败;
-                    log.createTime = DateTime.Now;
-                    await _sysLoginRecordRepository.InsertAsync(log);
+                    var data = await _sysRoleMenuServices.RoleModuleMaps();
+                    var list = (from item in data
+                                orderby item.id
+                                select new PermissionItem
+                                {
+                                    Url = item.menu?.component,
+                                    RouteUrl = item.menu?.path,
+                                    Authority = item.menu?.authority,
+                                    Role = item.role?.roleCode,
+                                }).ToList();
 
-                    jm.msg = "账户密码错误";
-                    return new JsonResult(jm);
+                    _permissionRequirement.Permissions = list;
                 }
-            }
-            catch (Exception e)
-            {
-                jm.code = 1;
-                jm.otherData = e.ToString();
-                jm.msg = "系统异常";
+
+                //用户标识
+                var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
+                identity.AddClaims(claims);
+
+                var token = JwtToken.BuildJwtToken(claims.ToArray(), _permissionRequirement);
+
+                jm.code = 0;
+                jm.msg = "认证成功";
+                jm.data = new
+                {
+                    token,
+                    loginUrl = "Panel.html"
+                };
+
+                //插入登录日志
+                var log = new SysLoginRecord();
+                log.username = model.userName;
+                log.ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                log.os = RuntimeInformation.OSDescription;
+                log.browser = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.UserAgent];
+                log.operType = (int)GlobalEnumVars.LoginRecordType.登录成功;
+                log.createTime = DateTime.Now;
+                await _sysLoginRecordRepository.InsertAsync(log);
+
                 return new JsonResult(jm);
             }
+            else
+            {
+                //插入登录日志
+                var log = new SysLoginRecord();
+                log.username = model.userName;
+                log.ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                log.os = RuntimeInformation.OSDescription;
+                log.browser = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.UserAgent];
+                log.operType = (int)GlobalEnumVars.LoginRecordType.登录失败;
+                log.createTime = DateTime.Now;
+                await _sysLoginRecordRepository.InsertAsync(log);
+
+                jm.msg = "账户密码错误";
+                return new JsonResult(jm);
+            }
+
         }
 
         /// <summary>
@@ -219,9 +210,6 @@ namespace CoreCms.Net.Web.Admin.Controllers
             jm.msg = "token无效，请重新登录！";
             return new JsonResult(jm);
         }
-
-
-
 
     }
 }
